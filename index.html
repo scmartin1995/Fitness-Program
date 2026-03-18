@@ -12,26 +12,108 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background: #0a0a0a;
-      color: #e8e8e0;
-      font-family: Georgia, 'Times New Roman', serif;
-      min-height: 100vh;
+      background: #0a0a0a; color: #e8e8e0;
+      font-family: Georgia, 'Times New Roman', serif; min-height: 100vh;
+      overflow-x: hidden;
     }
+
+    /* HEADER */
     .header {
-      border-bottom: 1px solid #222;
-      padding: 32px 24px 24px;
+      border-bottom: 1px solid #222; padding: 32px 24px 24px;
       background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
+      display: flex; align-items: flex-start; justify-content: space-between;
     }
-    .header-inner { max-width: 760px; margin: 0 auto; }
+    .header-inner { flex: 1; }
     .header-eyebrow {
       font-size: 11px; letter-spacing: 0.25em; color: #555;
       text-transform: uppercase; margin-bottom: 8px; font-family: 'Courier New', monospace;
     }
     .header h1 {
-      font-size: clamp(28px, 5vw, 42px); font-weight: 400;
+      font-size: clamp(24px, 5vw, 42px); font-weight: 400;
       line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 4px;
     }
     .header-sub { color: #888; font-size: 14px; font-family: 'Courier New', monospace; }
+
+    /* HAMBURGER */
+    .hamburger {
+      background: none; border: none; cursor: pointer;
+      padding: 4px; display: flex; flex-direction: column;
+      gap: 5px; margin-top: 8px; flex-shrink: 0;
+    }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: #666; border-radius: 2px; transition: all 0.2s;
+    }
+
+    /* DRAWER */
+    .drawer-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+      z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.25s;
+    }
+    .drawer-overlay.open { opacity: 1; pointer-events: all; }
+    .drawer {
+      position: fixed; top: 0; right: 0; bottom: 0; width: min(360px, 92vw);
+      background: #111; z-index: 101; transform: translateX(100%);
+      transition: transform 0.25s ease; overflow-y: auto;
+      border-left: 1px solid #222;
+    }
+    .drawer.open { transform: translateX(0); }
+    .drawer-header {
+      padding: 28px 24px 20px; border-bottom: 1px solid #1a1a1a;
+      display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; background: #111; z-index: 1;
+    }
+    .drawer-title {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #555; font-family: 'Courier New', monospace;
+    }
+    .drawer-close {
+      background: none; border: none; color: #555; cursor: pointer;
+      font-size: 20px; line-height: 1; padding: 2px 6px;
+    }
+    .drawer-section { padding: 24px; border-bottom: 1px solid #1a1a1a; }
+    .drawer-section-title {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #555; font-family: 'Courier New', monospace; margin-bottom: 16px;
+    }
+
+    /* REP CALCULATOR */
+    .calc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .calc-label { font-size: 11px; color: #666; font-family: 'Courier New', monospace; margin-bottom: 6px; }
+    .calc-input {
+      width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a; color: #e8e8e0;
+      font-family: 'Courier New', monospace; font-size: 16px; padding: 10px 12px;
+      border-radius: 4px; outline: none; transition: border-color 0.15s;
+    }
+    .calc-input:focus { border-color: #444; }
+    .calc-btn {
+      width: 100%; background: #1e1e1e; border: 1px solid #2a2a2a; color: #e8e8e0;
+      font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.15em;
+      text-transform: uppercase; padding: 12px; cursor: pointer; border-radius: 4px;
+      transition: background 0.15s; margin-bottom: 16px;
+    }
+    .calc-btn:hover { background: #252525; }
+    .calc-results { display: none; }
+    .calc-results.show { display: block; }
+    .calc-result-row {
+      display: grid; grid-template-columns: 1fr auto auto;
+      gap: 16px; padding: 9px 0; border-bottom: 1px solid #141414; align-items: center;
+    }
+    .calc-result-label { font-size: 13px; }
+    .calc-result-pct { font-size: 11px; color: #555; font-family: 'Courier New', monospace; }
+    .calc-result-val { font-size: 13px; font-family: 'Courier New', monospace; color: #e8e8e0; }
+    .calc-orm-display {
+      font-size: 11px; color: #666; font-family: 'Courier New', monospace;
+      margin-bottom: 14px; padding: 8px 0; border-bottom: 1px solid #141414;
+    }
+    .calc-orm-display span { color: #aaa; }
+
+    /* PROGRESSION */
+    .prog-row { padding: 12px 0; border-bottom: 1px solid #141414; }
+    .prog-label { font-size: 11px; color: #888; font-family: 'Courier New', monospace; margin-bottom: 4px; }
+    .prog-rule { font-size: 13px; line-height: 1.5; color: #ccc; }
+
+    /* TABS */
     .tabs-wrap {
       border-bottom: 1px solid #1a1a1a; padding: 0 24px;
       background: #0d0d0d; position: sticky; top: 0; z-index: 10;
@@ -43,18 +125,22 @@
     .tabs::-webkit-scrollbar { display: none; }
     .tab {
       background: none; border: none; border-bottom: 2px solid transparent;
-      color: #555; padding: 16px 20px 14px; cursor: pointer; font-size: 12px;
-      font-family: 'Courier New', monospace; letter-spacing: 0.12em;
+      color: #555; padding: 16px 18px 14px; cursor: pointer; font-size: 11px;
+      font-family: 'Courier New', monospace; letter-spacing: 0.1em;
       text-transform: uppercase; white-space: nowrap;
       transition: color 0.15s, border-color 0.15s;
       display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
     }
     .tab-day { font-size: 10px; opacity: 0.7; }
-    .content { max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+
+    /* CONTENT */
+    .content { max-width: 760px; margin: 0 auto; padding: 32px 24px 120px; }
     .day-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-start; }
     .day-title { font-size: 32px; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 6px; }
     .day-sub { color: #777; font-size: 13px; font-family: 'Courier New', monospace; }
     .day-duration { font-size: 11px; color: #444; font-family: 'Courier New', monospace; padding-top: 4px; }
+
+    /* SECTIONS */
     .section { margin-bottom: 24px; }
     .section-toggle {
       width: 100%; background: none; border: none;
@@ -66,7 +152,7 @@
       font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
       color: #999; font-family: 'Courier New', monospace;
     }
-    .section-caret { color: #444; font-size: 10px; }
+    .section-caret { color: #444; font-size: 10px; padding-right: 4px; }
     .section-items { padding-left: 14px; }
     .section-items.hidden { display: none; }
     .item {
@@ -76,6 +162,23 @@
     .item-name { font-size: 15px; font-weight: 400; }
     .item-note { font-size: 12px; color: #555; font-family: 'Courier New', monospace; line-height: 1.5; margin-top: 4px; }
     .item-sets { font-size: 12px; font-family: 'Courier New', monospace; white-space: nowrap; padding-top: 2px; opacity: 0.85; }
+
+    /* OFF DAYS CONTENT */
+    .offday-block { margin-bottom: 32px; }
+    .offday-type {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #555; font-family: 'Courier New', monospace; margin-bottom: 16px;
+      padding-bottom: 12px; border-bottom: 1px solid #1a1a1a;
+    }
+    .offday-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 10px 0; border-bottom: 1px solid #141414;
+    }
+    .offday-name { font-size: 15px; }
+    .offday-val { font-size: 12px; font-family: 'Courier New', monospace; color: #888; }
+    .offday-note { font-size: 12px; color: #555; font-family: 'Courier New', monospace; padding: 8px 0 4px; line-height: 1.5; }
+
+    /* BOTTOM */
     .bottom { border-top: 1px solid #1a1a1a; background: #0d0d0d; }
     .bottom-inner { max-width: 760px; margin: 0 auto; padding: 32px 24px; }
     .section-heading {
@@ -90,15 +193,68 @@
     .baseline-lift { font-size: 14px; }
     .baseline-orm { font-size: 12px; color: #555; font-family: 'Courier New', monospace; }
     .baseline-working { font-size: 12px; color: #e8e8e0; font-family: 'Courier New', monospace; }
-    .progression { margin-bottom: 40px; }
-    .prog-row { padding: 12px 0; border-bottom: 1px solid #141414; }
-    .prog-label { font-size: 12px; color: #888; font-family: 'Courier New', monospace; margin-bottom: 4px; }
-    .prog-rule { font-size: 13px; line-height: 1.5; color: #ccc; }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
     .note-row { font-size: 13px; color: #777; padding: 6px 0; border-bottom: 1px solid #141414; line-height: 1.4; }
     .off-days { margin-top: 32px; padding-top: 24px; border-top: 1px solid #1a1a1a; }
     .off-col { font-size: 13px; color: #666; line-height: 1.6; }
     .off-col span { color: #888; }
+
+    /* FLOATING TIMER */
+    .timer-bubble {
+      position: fixed; bottom: 32px; right: 24px;
+      width: 72px; height: 72px; border-radius: 50%;
+      background: #1a1a1a; border: 2px solid #2a2a2a;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 50; user-select: none;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      transition: border-color 0.2s, transform 0.1s;
+      touch-action: none;
+    }
+    .timer-bubble:active { transform: scale(0.95); }
+    .timer-time {
+      font-size: 15px; font-family: 'Courier New', monospace;
+      color: #e8e8e0; line-height: 1; font-weight: 400;
+    }
+    .timer-label {
+      font-size: 8px; font-family: 'Courier New', monospace;
+      color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 3px;
+    }
+    .timer-ring {
+      position: absolute; inset: -3px; border-radius: 50%;
+      pointer-events: none;
+    }
+
+    /* TIMER PANEL */
+    .timer-panel {
+      position: fixed; bottom: 116px; right: 24px;
+      background: #111; border: 1px solid #222; border-radius: 8px;
+      padding: 16px; z-index: 50; min-width: 180px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+      display: none;
+    }
+    .timer-panel.show { display: block; }
+    .timer-panel-title {
+      font-size: 10px; letter-spacing: 0.2em; color: #555;
+      font-family: 'Courier New', monospace; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .timer-presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+    .timer-preset {
+      background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa;
+      font-family: 'Courier New', monospace; font-size: 12px;
+      padding: 8px 4px; cursor: pointer; border-radius: 4px; text-align: center;
+      transition: all 0.15s;
+    }
+    .timer-preset:hover { background: #222; color: #e8e8e0; border-color: #444; }
+    .timer-preset.active { border-color: #666; color: #e8e8e0; }
+    .timer-controls { display: flex; gap: 8px; }
+    .timer-ctrl-btn {
+      flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa;
+      font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 8px 4px; cursor: pointer; border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .timer-ctrl-btn:hover { background: #222; color: #e8e8e0; }
+
     @media (max-width: 480px) {
       .two-col { grid-template-columns: 1fr; }
       .baseline-row { grid-template-columns: 1fr auto; }
@@ -108,12 +264,80 @@
 </head>
 <body>
 
+<!-- DRAWER OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- DRAWER -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <span class="drawer-title">Program Info</span>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+
+  <!-- REP CALCULATOR -->
+  <div class="drawer-section">
+    <div class="drawer-section-title">Rep Max Calculator</div>
+    <div class="calc-row">
+      <div>
+        <div class="calc-label">Weight (lb)</div>
+        <input class="calc-input" type="number" id="calcWeight" placeholder="225" inputmode="numeric" />
+      </div>
+      <div>
+        <div class="calc-label">Reps</div>
+        <input class="calc-input" type="number" id="calcReps" placeholder="5" inputmode="numeric" min="1" max="30" />
+      </div>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate</button>
+    <div class="calc-results" id="calcResults">
+      <div class="calc-orm-display">Est. 1RM: <span id="calcOrm">—</span></div>
+      <div id="calcRows"></div>
+    </div>
+  </div>
+
+  <!-- PROGRESSION RULES -->
+  <div class="drawer-section">
+    <div class="drawer-section-title">Progression Rules</div>
+    <div class="prog-row"><div class="prog-label">Primary Lifts</div><div class="prog-rule">Hit top reps → +2.5–5 lb next session. Miss reps → hold load.</div></div>
+    <div class="prog-row"><div class="prog-label">AR-7 Blocks</div><div class="prog-rule">Reduce rest first → add reps → small load increase every 2–3 weeks.</div></div>
+    <div class="prog-row"><div class="prog-label">Micro Arms (Push/Pull)</div><div class="prog-rule">Add reps first, then load slowly. Stop 1–2 reps from failure.</div></div>
+    <div class="prog-row"><div class="prog-label">Close-Grip Bench</div><div class="prog-rule">Same logic as Bench and OHP — hit top reps, earn the load.</div></div>
+    <div class="prog-row"><div class="prog-label">EZ-Bar Curl (Sunday)</div><div class="prog-rule">Add reps first (6→8), then +2.5 lb.</div></div>
+    <div class="prog-row"><div class="prog-label">Bulgarian Split Squat</div><div class="prog-rule">Add reps before load. Keep it submaximal — legs are pre-fatigued.</div></div>
+    <div class="prog-row"><div class="prog-label">Single-Leg RDL</div><div class="prog-rule">Do not aggressively progress. Pattern quality is the goal. Add a 3-sec pause at the bottom before adding load.</div></div>
+    <div class="prog-row"><div class="prog-label">Hip Thrust</div><div class="prog-rule">+5 lb every 2 weeks if form is clean through full ROM.</div></div>
+    <div class="prog-row"><div class="prog-label">Landmine Rotations</div><div class="prog-rule">Train speed and pattern first — load increases only every 3–4 weeks.</div></div>
+    <div class="prog-row"><div class="prog-label">Farmer Carries</div><div class="prog-rule">Increase distance before load.</div></div>
+  </div>
+
+  <!-- RECOVERY -->
+  <div class="drawer-section">
+    <div class="drawer-section-title">Recovery Guardrails</div>
+    <div class="prog-row"><div class="prog-rule" style="color:#777">— Deload every 6–8 weeks</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:#777">— Eat enough carbs</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:#777">— Sleep is mandatory</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:#777">— Never AR-7: deadlifts, heavy squats, Olympic lifts</div></div>
+  </div>
+
+  <!-- GOLF NOTES -->
+  <div class="drawer-section">
+    <div class="drawer-section-title">Golf Notes</div>
+    <div class="prog-row"><div class="prog-rule" style="color:#777">— Landmine + cable rotations are pattern training — ego stays outside</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:#777">— Hip mobility unlocks rotational power you already have</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:#777">— Farmer carries = grip training + spinal decompression</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:#777">— Pallof Press builds anti-rotation stability that holds under fatigue</div></div>
+  </div>
+</div>
+
+<!-- HEADER -->
 <div class="header">
   <div class="header-inner">
     <div class="header-eyebrow">AR-7 Hybrid Program</div>
     <h1>Strength + Hypertrophy</h1>
     <div class="header-sub">Thu–Sun · 4 Days/Week · Golf Athleticism Integrated</div>
   </div>
+  <button class="hamburger" onclick="openDrawer()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </div>
 
 <div class="tabs-wrap">
@@ -122,7 +346,7 @@
 
 <div class="content" id="content"></div>
 
-<div class="bottom">
+<div class="bottom" id="bottomSection">
   <div class="bottom-inner">
     <div class="baselines">
       <div class="section-heading">Strength Baselines</div>
@@ -132,104 +356,181 @@
       <div class="baseline-row"><span class="baseline-lift">Romanian Deadlift</span><span class="baseline-orm">1RM ~254 lb</span><span class="baseline-working">185–195 lb</span></div>
       <div class="baseline-row"><span class="baseline-lift">Close-Grip Bench</span><span class="baseline-orm">1RM ~200 lb est.</span><span class="baseline-working">155–165 lb</span></div>
     </div>
-    <div class="progression">
-      <div class="section-heading">Progression Rules</div>
-      <div class="prog-row"><div class="prog-label">Primary Lifts</div><div class="prog-rule">Hit top reps → +2.5–5 lb next session. Miss reps → hold load.</div></div>
-      <div class="prog-row"><div class="prog-label">AR-7 Blocks</div><div class="prog-rule">Reduce rest first → add reps → small load increase every 2–3 weeks.</div></div>
-      <div class="prog-row"><div class="prog-label">Micro Arms (Push/Pull)</div><div class="prog-rule">Add reps first, then load slowly. Stop 1–2 reps from failure.</div></div>
-      <div class="prog-row"><div class="prog-label">Close-Grip Bench</div><div class="prog-rule">Same logic as Bench and OHP — hit top reps, earn the load.</div></div>
-      <div class="prog-row"><div class="prog-label">EZ-Bar Curl (Sunday)</div><div class="prog-rule">Add reps first (6→8), then +2.5 lb.</div></div>
-      <div class="prog-row"><div class="prog-label">Bulgarian Split Squat</div><div class="prog-rule">Add reps before load. Keep it submaximal — legs are pre-fatigued.</div></div>
-      <div class="prog-row"><div class="prog-label">Single-Leg RDL</div><div class="prog-rule">Do not aggressively progress. Pattern quality is the goal. Add a 3-sec pause at the bottom before adding load.</div></div>
-      <div class="prog-row"><div class="prog-label">Hip Thrust</div><div class="prog-rule">+5 lb every 2 weeks if form is clean through full ROM.</div></div>
-      <div class="prog-row"><div class="prog-label">Landmine Rotations</div><div class="prog-rule">Train speed and pattern first — load increases only every 3–4 weeks.</div></div>
-      <div class="prog-row"><div class="prog-label">Farmer Carries</div><div class="prog-rule">Increase distance before load.</div></div>
-    </div>
-    <div class="two-col">
-      <div>
-        <div class="section-heading">Recovery Guardrails</div>
-        <div class="note-row">— Deload every 6–8 weeks</div>
-        <div class="note-row">— Eat enough carbs</div>
-        <div class="note-row">— Sleep is mandatory</div>
-        <div class="note-row">— Never AR-7: deadlifts, heavy squats, Olympic lifts</div>
-      </div>
-      <div>
-        <div class="section-heading">Golf Notes</div>
-        <div class="note-row">— Landmine + cable rotations are pattern training — ego stays outside</div>
-        <div class="note-row">— Hip mobility unlocks rotational power you already have</div>
-        <div class="note-row">— Farmer carries = grip training + spinal decompression</div>
-        <div class="note-row">— Pallof Press builds anti-rotation stability that holds under fatigue</div>
-      </div>
-    </div>
-    <div class="off-days">
-      <div class="section-heading">Off Days (Mon–Wed) — Jump Rope</div>
-      <div class="two-col">
-        <div class="off-col"><span>Recovery Day</span><br>10–15 min steady pace</div>
-        <div class="off-col"><span>Conditioning Day</span><br>5 rounds · 1 min fast / 1 min easy</div>
-      </div>
-    </div>
   </div>
 </div>
 
+<!-- FLOATING TIMER -->
+<div class="timer-panel" id="timerPanel">
+  <div class="timer-panel-title">Rest Timer</div>
+  <div class="timer-presets">
+    <div class="timer-preset" onclick="setTimer(60)">1:00</div>
+    <div class="timer-preset" onclick="setTimer(90)">1:30</div>
+    <div class="timer-preset" onclick="setTimer(120)">2:00</div>
+    <div class="timer-preset" onclick="setTimer(180)">3:00</div>
+  </div>
+  <div class="timer-controls">
+    <button class="timer-ctrl-btn" onclick="startPauseTimer()">Start</button>
+    <button class="timer-ctrl-btn" onclick="resetTimer()">Reset</button>
+  </div>
+</div>
+
+<div class="timer-bubble" id="timerBubble" onclick="toggleTimerPanel()">
+  <svg class="timer-ring" viewBox="0 0 80 80">
+    <circle cx="40" cy="40" r="36" fill="none" stroke="#1e1e1e" stroke-width="2"/>
+    <circle id="timerArc" cx="40" cy="40" r="36" fill="none" stroke="#555" stroke-width="2"
+      stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round"
+      transform="rotate(-90 40 40)" style="transition: stroke-dashoffset 0.5s linear, stroke 0.3s"/>
+  </svg>
+  <div class="timer-time" id="timerDisplay">REST</div>
+  <div class="timer-label" id="timerLabel">TAP</div>
+</div>
+
 <script>
+// ─── DATA ───────────────────────────────────────────────────────
 const days = [
   {
-    id:"push",day:"Thursday",label:"PUSH",sub:"Chest · Shoulders · Triceps",accent:"#E84B2A",duration:"~70 min",
+    id:"push", day:"Thursday", label:"PUSH",
+    sub:"Chest · Shoulders · Triceps", accent:"#E84B2A", duration:"~70 min",
     sections:[
-      {title:"Warm-Up",items:[{name:"Dip Position Leg Raises",sets:"2 × 10",note:""},{name:"Bodyweight Dips",sets:"2 × 10",note:"Then ramp sets into Bench Press"}]},
-      {title:"Primary Strength",items:[{name:"Barbell Bench Press",sets:"4 × 4–6 @ 210–215 lb",note:"2–3 min rest · Progress to 220 when hitting 6 across all 4 sets"},{name:"Standing Overhead Press",sets:"3 × 5–6 @ 125–130 lb",note:"2 min rest · Build from 125, earn 130"}]},
-      {title:"AR-7 Block — Chest Focus",ar7:true,items:[{name:"Action: Incline DB Press",sets:"6–8 reps",note:""},{name:"Reaction: DB Fly or Pec Deck",sets:"12–15 reps",note:"7 rounds · 15–20 sec rest"}]},
-      {title:"Accessories",items:[{name:"Dumbbell Lateral Raises",sets:"3 × 12–15",note:""}]},
-      {title:"Micro Arm Add-On — Triceps",items:[{name:"Rope Pushdowns or Overhead Cable Extensions",sets:"3 × 10–12",note:"~60 sec rest"}]},
+      {title:"Warm-Up", items:[
+        {name:"Dip Position Leg Raises", sets:"2 × 10", note:""},
+        {name:"Bodyweight Dips", sets:"2 × 10", note:"Then ramp sets into Bench Press"},
+      ]},
+      {title:"Primary Strength", items:[
+        {name:"Barbell Bench Press", sets:"4 × 4–6 @ 210–215 lb", note:"2–3 min rest · Progress to 220 when hitting 6 across all 4 sets"},
+        {name:"Standing Overhead Press", sets:"3 × 5–6 @ 125–130 lb", note:"2 min rest · Build from 125, earn 130"},
+      ]},
+      {title:"AR-7 Block — Chest Focus", ar7:true, items:[
+        {name:"Action: Incline DB Press", sets:"6–8 reps", note:""},
+        {name:"Reaction: DB Fly or Pec Deck", sets:"12–15 reps", note:"7 rounds · 15–20 sec rest"},
+      ]},
+      {title:"Accessories", items:[
+        {name:"Dumbbell Lateral Raises", sets:"3 × 12–15", note:""},
+      ]},
+      {title:"Micro Arm Add-On — Triceps", items:[
+        {name:"Rope Pushdowns or Overhead Cable Extensions", sets:"3 × 10–12", note:"~60 sec rest"},
+      ]},
     ]
   },
   {
-    id:"pull",day:"Friday",label:"PULL",sub:"Back · Rear Delts · Biceps",accent:"#2A7BE8",duration:"~75 min",
+    id:"pull", day:"Friday", label:"PULL",
+    sub:"Back · Rear Delts · Biceps", accent:"#2A7BE8", duration:"~75 min",
     sections:[
-      {title:"Warm-Up",items:[{name:"Dip Position Leg Raises",sets:"2 × 10",note:"Then ramp sets into Pull-Ups"}]},
-      {title:"Primary Strength",items:[{name:"Weighted Pull-Ups or Lat Pulldown",sets:"4 × 5–6",note:"2 min rest"},{name:"Barbell Row or Chest-Supported Row",sets:"3 × 5–6",note:"2 min rest"}]},
-      {title:"AR-7 Block — Back Focus",ar7:true,items:[{name:"Action: One-Arm DB Row",sets:"6–8 reps / side",note:""},{name:"Reaction: Straight-Arm Pulldown or Band Pullover",sets:"12–15 reps",note:"7 rounds · minimal rest"}]},
-      {title:"Accessories",items:[{name:"Dirty 30s",sets:"3 × 15",note:"Supinated ×10 → Neutral ×10 → Hip drive neutral ×10"}]},
-      {title:"Micro Arm Add-On — Biceps",items:[{name:"EZ-Bar Curl or DB Curl",sets:"3 × 10–12",note:"~60 sec rest"}]},
-      {title:"Golf Add-On",items:[{name:"Farmer Carries or Dead Hangs",sets:"2 × 30–40m / 2 × 20–30 sec",note:"~60 sec rest · Finish session here"}]},
+      {title:"Warm-Up", items:[
+        {name:"Dip Position Leg Raises", sets:"2 × 10", note:"Then ramp sets into Pull-Ups"},
+      ]},
+      {title:"Primary Strength", items:[
+        {name:"Weighted Pull-Ups or Lat Pulldown", sets:"4 × 5–6", note:"2 min rest"},
+        {name:"Barbell Row or Chest-Supported Row", sets:"3 × 5–6", note:"2 min rest"},
+      ]},
+      {title:"AR-7 Block — Back Focus", ar7:true, items:[
+        {name:"Action: One-Arm DB Row", sets:"6–8 reps / side", note:""},
+        {name:"Reaction: Straight-Arm Pulldown or Band Pullover", sets:"12–15 reps", note:"7 rounds · minimal rest"},
+      ]},
+      {title:"Accessories", items:[
+        {name:"Dirty 30s", sets:"3 × 15", note:"Supinated ×10 → Neutral ×10 → Hip drive neutral ×10"},
+      ]},
+      {title:"Micro Arm Add-On — Biceps", items:[
+        {name:"EZ-Bar Curl or DB Curl", sets:"3 × 10–12", note:"~60 sec rest"},
+      ]},
+      {title:"Golf Add-On", items:[
+        {name:"Farmer Carries or Dead Hangs", sets:"2 × 30–40m / 2 × 20–30 sec", note:"~60 sec rest · Finish session here"},
+      ]},
     ]
   },
   {
-    id:"legs",day:"Saturday",label:"LEGS",sub:"Quads · Hamstrings · Glutes · Core",accent:"#2AE87B",duration:"~80 min",
+    id:"legs", day:"Saturday", label:"LEGS",
+    sub:"Quads · Hamstrings · Glutes · Core", accent:"#2AE87B", duration:"~80 min",
     sections:[
-      {title:"Warm-Up",items:[{name:"Feet Elevated Side Crunches",sets:"2 × 5",note:"Neutral push-up → lateral flexion → back to neutral"},{name:"90/90 Hip Switches",sets:"2 × 10",note:""},{name:"Hip CARs",sets:"2 × 5 / side",note:"Then ramp sets into Squat"}]},
-      {title:"Primary Strength",items:[{name:"Back Squat or Safety Bar Squat",sets:"4 × 3–5 @ 275–285 lb",note:"2–3 min rest · 295 is next target"},{name:"Romanian Deadlift",sets:"3 × 5–6 @ 185–195 lb",note:"2 min rest · Pattern over load"}]},
-      {title:"AR-7 Block — Quad Focus",ar7:true,items:[{name:"Action: Leg Press or Front Squat",sets:"6–8 reps",note:""},{name:"Reaction: Sissy Squats",sets:"10–12 reps",note:"7 rounds · 15–20 sec rest"}]},
-      {title:"Core / Anti-Rotation",items:[{name:"Hanging Leg Raises or Ab Wheel",sets:"3 × 10–12",note:"Alternate weekly with Pallof Press"},{name:"Pallof Press (alternate week)",sets:"3 × 10–12 / side",note:"Light-moderate, slow and controlled"}]},
-      {title:"Golf Power Add-On",items:[{name:"Landmine Rotations",sets:"3 × 8–10 / side",note:"~60 sec rest · Pattern training, not strength work"}]},
+      {title:"Warm-Up", items:[
+        {name:"Feet Elevated Side Crunches", sets:"2 × 5", note:"Neutral push-up → lateral flexion → back to neutral"},
+        {name:"90/90 Hip Switches", sets:"2 × 10", note:""},
+        {name:"Hip CARs", sets:"2 × 5 / side", note:"Then ramp sets into Squat"},
+      ]},
+      {title:"Primary Strength", items:[
+        {name:"Back Squat or Safety Bar Squat", sets:"4 × 3–5 @ 275–285 lb", note:"2–3 min rest · 295 is next target"},
+        {name:"Romanian Deadlift", sets:"3 × 5–6 @ 185–195 lb", note:"2 min rest · Pattern over load"},
+      ]},
+      {title:"AR-7 Block — Quad Focus", ar7:true, items:[
+        {name:"Action: Leg Press or Front Squat", sets:"6–8 reps", note:""},
+        {name:"Reaction: Sissy Squats", sets:"10–12 reps", note:"7 rounds · 15–20 sec rest"},
+      ]},
+      {title:"Core / Anti-Rotation", items:[
+        {name:"Hanging Leg Raises or Ab Wheel", sets:"3 × 10–12", note:"Alternate weekly with Pallof Press"},
+        {name:"Pallof Press (alternate week)", sets:"3 × 10–12 / side", note:"Light-moderate, slow and controlled"},
+      ]},
+      {title:"Golf Power Add-On", items:[
+        {name:"Landmine Rotations", sets:"3 × 8–10 / side", note:"~60 sec rest · Pattern training, not strength work"},
+      ]},
     ]
   },
   {
-    id:"arms",day:"Sunday",label:"ARMS + LEGS",sub:"Biceps · Triceps · Unilateral Legs · Glutes",accent:"#E8C42A",duration:"~70 min",
+    id:"arms", day:"Sunday", label:"ARMS + LEGS",
+    sub:"Biceps · Triceps · Unilateral Legs · Glutes", accent:"#E8C42A", duration:"~70 min",
     sections:[
-      {title:"Warm-Up",items:[{name:"Wrist Circles + Forearm Stretch",sets:"2 × 10 each direction",note:""},{name:"Band Pull-Aparts",sets:"2 × 15",note:"Shoulder health primer"},{name:"Cable Rope Pushdown (light)",sets:"1 × 20",note:"Elbow warm-up"},{name:"EZ-Bar Curl (light)",sets:"1 × 15",note:"Then ramp into Close-Grip Bench"}]},
-      {title:"Primary Strength — Triceps",items:[{name:"Close-Grip Bench Press",sets:"4 × 5–6 @ 155–165 lb",note:"2 min rest · Hit 6 across all 4 to earn next load"}]},
-      {title:"Primary Strength — Biceps",items:[{name:"EZ-Bar Curl or Barbell Curl",sets:"4 × 6–8",note:"90 sec rest · 3 sec eccentric, no body English"}]},
-      {title:"AR-7 Block — Triceps Focus",ar7:true,items:[{name:"Action: Overhead Cable Extension or Skull Crusher",sets:"8–10 reps",note:"Long head stretch position"},{name:"Reaction: Rope Pushdown",sets:"12–15 reps",note:"7 rounds · 15–20 sec rest · Lateral head in shortened position"}]},
-      {title:"Superset — Biceps Hypertrophy",items:[{name:"A1: Incline DB Curl",sets:"3 × 10–12",note:"Long head stretch"},{name:"A2: Hammer Curl",sets:"3 × 10–12",note:"60 sec between supersets · Brachialis + grip transfer"}]},
-      {title:"Unilateral Legs — Quad",items:[{name:"Bulgarian Split Squat",sets:"3 × 8–10 / leg @ 50–70 lb DBs",note:"90 sec rest · Submaximal — legs are pre-fatigued from Saturday"}]},
-      {title:"Unilateral Legs — Posterior Chain",items:[{name:"Single-Leg RDL",sets:"3 × 8–10 / leg",note:"90 sec rest · Light-moderate · Pattern quality over load"}]},
-      {title:"Glute Isolation",items:[{name:"Hip Thrust or Cable Pull-Through",sets:"3 × 12–15",note:"60 sec rest · Full hip extension, controlled squeeze"}]},
-      {title:"Calves + Golf Finish",items:[{name:"Standing Calf Raise",sets:"3 × 15–20",note:"60 sec rest · Full ROM, slow eccentric"},{name:"Dead Hang",sets:"2 × 20–30 sec",note:"Finish session here · Decompression + grip endurance"}]},
+      {title:"Warm-Up", items:[
+        {name:"Wrist Circles + Forearm Stretch", sets:"2 × 10 each direction", note:""},
+        {name:"Band Pull-Aparts", sets:"2 × 15", note:"Shoulder health primer"},
+        {name:"Cable Rope Pushdown (light)", sets:"1 × 20", note:"Elbow warm-up"},
+        {name:"EZ-Bar Curl (light)", sets:"1 × 15", note:"Then ramp into Close-Grip Bench"},
+      ]},
+      {title:"Primary Strength — Triceps", items:[
+        {name:"Close-Grip Bench Press", sets:"4 × 5–6 @ 155–165 lb", note:"2 min rest · Hit 6 across all 4 to earn next load"},
+      ]},
+      {title:"Primary Strength — Biceps", items:[
+        {name:"EZ-Bar Curl or Barbell Curl", sets:"4 × 6–8", note:"90 sec rest · 3 sec eccentric, no body English"},
+      ]},
+      {title:"AR-7 Block — Triceps Focus", ar7:true, items:[
+        {name:"Action: Overhead Cable Extension or Skull Crusher", sets:"8–10 reps", note:"Long head stretch position"},
+        {name:"Reaction: Rope Pushdown", sets:"12–15 reps", note:"7 rounds · 15–20 sec rest · Lateral head in shortened position"},
+      ]},
+      {title:"Superset — Biceps Hypertrophy", items:[
+        {name:"A1: Incline DB Curl", sets:"3 × 10–12", note:"Long head stretch"},
+        {name:"A2: Hammer Curl", sets:"3 × 10–12", note:"60 sec between supersets · Brachialis + grip transfer"},
+      ]},
+      {title:"Unilateral Legs — Quad", items:[
+        {name:"Bulgarian Split Squat", sets:"3 × 8–10 / leg @ 50–70 lb DBs", note:"90 sec rest · Submaximal — legs are pre-fatigued from Saturday"},
+      ]},
+      {title:"Unilateral Legs — Posterior Chain", items:[
+        {name:"Single-Leg RDL", sets:"3 × 8–10 / leg", note:"90 sec rest · Light-moderate · Pattern quality over load"},
+      ]},
+      {title:"Glute Isolation", items:[
+        {name:"Hip Thrust or Cable Pull-Through", sets:"3 × 12–15", note:"60 sec rest · Full hip extension, controlled squeeze"},
+      ]},
+      {title:"Calves + Golf Finish", items:[
+        {name:"Standing Calf Raise", sets:"3 × 15–20", note:"60 sec rest · Full ROM, slow eccentric"},
+        {name:"Dead Hang", sets:"2 × 20–30 sec", note:"Finish session here · Decompression + grip endurance"},
+      ]},
     ]
+  },
+  {
+    id:"off", day:"Mon–Wed", label:"OFF DAYS",
+    sub:"Recovery · Conditioning · Mobility", accent:"#9B8EE8", duration:"Optional",
+    isOff: true,
   },
 ];
 
+// ─── STATE ──────────────────────────────────────────────────────
 let activeDay = "push";
 const openSections = {};
 
+// ─── RENDER ─────────────────────────────────────────────────────
 function render() {
   const day = days.find(d => d.id === activeDay);
+
   document.getElementById("tabs").innerHTML = days.map(d => `
     <button class="tab" onclick="switchDay('${d.id}')"
-      style="border-bottom-color:${activeDay===d.id?d.accent:'transparent'};color:${activeDay===d.id?d.accent:'#555'}">
+      style="border-bottom-color:${activeDay===d.id ? d.accent : 'transparent'};
+             color:${activeDay===d.id ? d.accent : '#555'}">
       <span class="tab-day">${d.day}</span>${d.label}
     </button>`).join("");
+
+  document.getElementById("bottomSection").style.display = day.isOff ? "none" : "block";
+
+  if (day.isOff) {
+    renderOffDays(day);
+    return;
+  }
 
   const sections = day.sections.map((s, si) => {
     const key = `${day.id}-${si}`;
@@ -246,13 +547,14 @@ function render() {
     return `
       <div class="section">
         <button class="section-toggle" onclick="toggleSection('${key}')"
-          style="border-top-color:${s.ar7?day.accent+'44':'#1e1e1e'};border-left-color:${s.ar7?day.accent:'transparent'}">
-          <span class="section-label" style="color:${s.ar7?day.accent:'#999'}">
-            ${s.ar7?'<span style="margin-right:8px;opacity:0.7">◆</span>':''}${s.title}
+          style="border-top-color:${s.ar7 ? day.accent+'44' : '#1e1e1e'};
+                 border-left-color:${s.ar7 ? day.accent : 'transparent'}">
+          <span class="section-label" style="color:${s.ar7 ? day.accent : '#999'}">
+            ${s.ar7 ? '<span style="margin-right:8px;opacity:0.7">◆</span>' : ''}${s.title}
           </span>
-          <span class="section-caret">${open?"▲":"▼"}</span>
+          <span class="section-caret">${open ? "▲" : "▼"}</span>
         </button>
-        <div class="section-items${open?'':' hidden'}">${items}</div>
+        <div class="section-items${open ? '' : ' hidden'}">${items}</div>
       </div>`;
   }).join("");
 
@@ -266,10 +568,52 @@ function render() {
     </div>${sections}`;
 }
 
+function renderOffDays(day) {
+  document.getElementById("content").innerHTML = `
+    <div class="day-header">
+      <div>
+        <div class="day-title" style="color:${day.accent}">${day.label}</div>
+        <div class="day-sub">${day.sub}</div>
+      </div>
+      <div class="day-duration">${day.duration}</div>
+    </div>
+
+    <div class="offday-block">
+      <div class="offday-type">Jump Rope — Recovery Day</div>
+      <div class="offday-row"><span class="offday-name">Steady State</span><span class="offday-val">10–15 min</span></div>
+      <div class="offday-note">Easy pace · Nasal breathing only · Not a conditioning session</div>
+    </div>
+
+    <div class="offday-block">
+      <div class="offday-type">Jump Rope — Conditioning Day</div>
+      <div class="offday-row"><span class="offday-name">Work Interval</span><span class="offday-val">1 min fast</span></div>
+      <div class="offday-row"><span class="offday-name">Rest Interval</span><span class="offday-val">1 min easy</span></div>
+      <div class="offday-row"><span class="offday-name">Rounds</span><span class="offday-val">5</span></div>
+      <div class="offday-note">Total ~10 min · Push pace on work intervals · Walk or slow spin on rest</div>
+    </div>
+
+    <div class="offday-block">
+      <div class="offday-type">Mobility — Optional</div>
+      <div class="offday-row"><span class="offday-name">90/90 Hip Switches</span><span class="offday-val">2 × 10</span></div>
+      <div class="offday-row"><span class="offday-name">Hip CARs</span><span class="offday-val">2 × 5 / side</span></div>
+      <div class="offday-row"><span class="offday-name">Dead Hang</span><span class="offday-val">2 × 30 sec</span></div>
+      <div class="offday-row"><span class="offday-name">Thoracic Rotations</span><span class="offday-val">2 × 10 / side</span></div>
+      <div class="offday-note">Low stakes · Maintain range of motion between sessions · Never to fatigue</div>
+    </div>
+
+    <div class="offday-block">
+      <div class="offday-type">Frequency</div>
+      <div class="offday-row"><span class="offday-name">Recovery Day</span><span class="offday-val">1–2× / week</span></div>
+      <div class="offday-row"><span class="offday-name">Conditioning Day</span><span class="offday-val">1× / week</span></div>
+      <div class="offday-row"><span class="offday-name">Full Rest</span><span class="offday-val">At least 1 day</span></div>
+      <div class="offday-note">Full rest means full rest. Mobility is not mandatory. Sleep is.</div>
+    </div>`;
+}
+
 function switchDay(id) {
   activeDay = id;
   render();
-  window.scrollTo({top:0,behavior:"smooth"});
+  window.scrollTo({top:0, behavior:"smooth"});
 }
 
 function toggleSection(key) {
@@ -277,6 +621,176 @@ function toggleSection(key) {
   render();
 }
 
+// ─── DRAWER ─────────────────────────────────────────────────────
+function openDrawer() {
+  document.getElementById("drawer").classList.add("open");
+  document.getElementById("drawerOverlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+function closeDrawer() {
+  document.getElementById("drawer").classList.remove("open");
+  document.getElementById("drawerOverlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+// ─── CALCULATOR ─────────────────────────────────────────────────
+function calculate() {
+  const w = parseFloat(document.getElementById("calcWeight").value);
+  const r = parseInt(document.getElementById("calcReps").value);
+  if (!w || !r || r < 1) return;
+
+  // Epley formula
+  const orm = r === 1 ? w : Math.round(w * (1 + r / 30) / 2.5) * 2.5;
+
+  const ranges = [
+    { label: "1RM (max)", pct: 100 },
+    { label: "3–5 reps (strength)", pct: 87 },
+    { label: "4–6 reps (strength+)", pct: 83 },
+    { label: "5–6 reps (hybrid)", pct: 80 },
+    { label: "6–8 reps (hypertrophy)", pct: 75 },
+    { label: "8–10 reps (hypertrophy)", pct: 70 },
+    { label: "10–12 reps (volume)", pct: 65 },
+    { label: "12–15 reps (endurance)", pct: 60 },
+  ];
+
+  document.getElementById("calcOrm").textContent = orm + " lb";
+  document.getElementById("calcRows").innerHTML = ranges.map(r => {
+    const val = Math.round(orm * r.pct / 100 / 2.5) * 2.5;
+    return `<div class="calc-result-row">
+      <span class="calc-result-label">${r.label}</span>
+      <span class="calc-result-pct">${r.pct}%</span>
+      <span class="calc-result-val">${val} lb</span>
+    </div>`;
+  }).join("");
+
+  document.getElementById("calcResults").classList.add("show");
+}
+
+document.getElementById("calcReps").addEventListener("keyup", e => { if(e.key==="Enter") calculate(); });
+document.getElementById("calcWeight").addEventListener("keyup", e => { if(e.key==="Enter") calculate(); });
+
+// ─── TIMER ──────────────────────────────────────────────────────
+let timerTotal = 90;
+let timerRemaining = 90;
+let timerInterval = null;
+let timerRunning = false;
+let panelOpen = false;
+
+const arc = document.getElementById("timerArc");
+const display = document.getElementById("timerDisplay");
+const label = document.getElementById("timerLabel");
+const bubble = document.getElementById("timerBubble");
+const CIRCUMFERENCE = 226;
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerRemaining / 60);
+  const s = timerRemaining % 60;
+  display.textContent = `${m}:${s.toString().padStart(2,"0")}`;
+  const pct = timerTotal > 0 ? timerRemaining / timerTotal : 0;
+  arc.style.strokeDashoffset = CIRCUMFERENCE * (1 - pct);
+
+  if (timerRunning) {
+    const day = days.find(d => d.id === activeDay);
+    arc.style.stroke = day ? day.accent : "#888";
+    label.textContent = "RUNNING";
+    bubble.style.borderColor = day ? day.accent + "66" : "#444";
+  } else if (timerRemaining === 0) {
+    arc.style.stroke = "#2AE87B";
+    label.textContent = "DONE";
+    bubble.style.borderColor = "#2AE87B66";
+  } else {
+    arc.style.stroke = "#555";
+    label.textContent = timerRunning ? "RUNNING" : "TAP";
+    bubble.style.borderColor = "#2a2a2a";
+  }
+}
+
+function setTimer(seconds) {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timerRunning = false;
+  timerTotal = seconds;
+  timerRemaining = seconds;
+  document.querySelectorAll(".timer-preset").forEach(b => b.classList.remove("active"));
+  event.target.classList.add("active");
+  document.querySelector("[onclick='startPauseTimer()']").textContent = "Start";
+  updateTimerDisplay();
+}
+
+function startPauseTimer() {
+  if (timerRemaining === 0) { resetTimer(); return; }
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    label.textContent = "PAUSED";
+    this.textContent = "Resume";
+    document.querySelector("[onclick='startPauseTimer()']").textContent = "Resume";
+  } else {
+    timerRunning = true;
+    document.querySelector("[onclick='startPauseTimer()']").textContent = "Pause";
+    timerInterval = setInterval(() => {
+      timerRemaining--;
+      updateTimerDisplay();
+      if (timerRemaining <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timerRemaining = 0;
+        document.querySelector("[onclick='startPauseTimer()']").textContent = "Start";
+        // Vibrate on finish
+        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+      }
+    }, 1000);
+  }
+  updateTimerDisplay();
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerRemaining = timerTotal;
+  document.querySelector("[onclick='startPauseTimer()']").textContent = "Start";
+  updateTimerDisplay();
+}
+
+function toggleTimerPanel() {
+  panelOpen = !panelOpen;
+  document.getElementById("timerPanel").classList.toggle("show", panelOpen);
+}
+
+// Close timer panel when tapping elsewhere
+document.addEventListener("click", e => {
+  if (panelOpen && !e.target.closest("#timerPanel") && !e.target.closest("#timerBubble")) {
+    panelOpen = false;
+    document.getElementById("timerPanel").classList.remove("show");
+  }
+});
+
+// Drag timer bubble
+let drag = false, startX, startY, bx, by;
+bubble.addEventListener("pointerdown", e => {
+  drag = false;
+  startX = e.clientX; startY = e.clientY;
+  bx = bubble.getBoundingClientRect().left;
+  by = bubble.getBoundingClientRect().top;
+  bubble.setPointerCapture(e.pointerId);
+});
+bubble.addEventListener("pointermove", e => {
+  const dx = e.clientX - startX, dy = e.clientY - startY;
+  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+    drag = true;
+    const x = bx + dx;
+    const y = by + dy;
+    bubble.style.right = "auto";
+    bubble.style.bottom = "auto";
+    bubble.style.left = Math.max(0, Math.min(window.innerWidth - 72, x)) + "px";
+    bubble.style.top = Math.max(0, Math.min(window.innerHeight - 72, y)) + "px";
+  }
+});
+bubble.addEventListener("pointerup", e => {
+  if (drag) { e.stopPropagation(); e.preventDefault(); }
+});
+
+updateTimerDisplay();
 render();
 </script>
 </body>
