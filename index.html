@@ -2,412 +2,235 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>AR-7 Hybrid Program</title>
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="AR-7" />
   <meta name="theme-color" content="#0a0a0a" />
   <link rel="manifest" href="manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=IBM+Plex+Mono:wght@300;400&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: #0a0a0a; color: #e8e8e0;
-      font-family: Georgia, 'Times New Roman', serif; min-height: 100vh;
-      overflow-x: hidden;
+    :root {
+      --bg:#0a0a0a; --bg-raised:#0d0d0d; --bg-card:#111; --bg-input:#1a1a1a;
+      --border-dim:#141414; --border-mid:#1e1e1e; --border-soft:#222; --border-vis:#2a2a2a;
+      --text-primary:#e8e8e0; --text-secondary:#aaa; --text-dim:#777;
+      --text-muted:#555; --text-ghost:#444; --text-faint:#333;
+      --font-serif:'Playfair Display',Georgia,serif;
+      --font-mono:'IBM Plex Mono','Courier New',monospace;
+      --safe-bottom:env(safe-area-inset-bottom,0px);
+      --safe-top:env(safe-area-inset-top,0px);
+      --t-fast:0.15s ease; --t-mid:0.25s ease;
     }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--bg);color:var(--text-primary);font-family:var(--font-serif);min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
 
     /* HEADER */
-    .header {
-      border-bottom: 1px solid #222; padding: 32px 24px 24px;
-      background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
-      display: flex; align-items: flex-start; justify-content: space-between;
-    }
-    .header-inner { flex: 1; }
-    .header-eyebrow {
-      font-size: 11px; letter-spacing: 0.25em; color: #555;
-      text-transform: uppercase; margin-bottom: 8px; font-family: 'Courier New', monospace;
-    }
-    .header h1 {
-      font-size: clamp(24px, 5vw, 42px); font-weight: 400;
-      line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 4px;
-    }
-    .header-sub { color: #888; font-size: 14px; font-family: 'Courier New', monospace; }
+    .header{border-bottom:1px solid var(--border-soft);padding:calc(32px + var(--safe-top)) 24px 24px;background:linear-gradient(180deg,var(--bg-card) 0%,var(--bg) 100%);display:flex;align-items:flex-start;justify-content:space-between;animation:fadeDown 0.4s ease both;}
+    .header-inner{flex:1;}
+    .header-eyebrow{font-size:10px;letter-spacing:0.3em;color:var(--text-muted);text-transform:uppercase;margin-bottom:10px;font-family:var(--font-mono);}
+    .header h1{font-size:clamp(26px,5vw,42px);font-weight:400;line-height:1.1;letter-spacing:-0.02em;margin-bottom:6px;font-family:var(--font-serif);}
+    .header-sub{color:var(--text-dim);font-size:13px;font-family:var(--font-mono);font-weight:300;}
 
     /* HAMBURGER */
-    .hamburger {
-      background: none; border: none; cursor: pointer;
-      padding: 4px; display: flex; flex-direction: column;
-      gap: 5px; margin-top: 8px; flex-shrink: 0;
-    }
-    .hamburger span {
-      display: block; width: 22px; height: 2px;
-      background: #666; border-radius: 2px; transition: all 0.2s;
-    }
+    .hamburger{background:none;border:none;cursor:pointer;padding:10px;display:flex;flex-direction:column;gap:5px;margin-top:4px;flex-shrink:0;min-width:44px;min-height:44px;align-items:center;justify-content:center;border-radius:4px;transition:background var(--t-fast);}
+    .hamburger:hover{background:rgba(255,255,255,0.04);}
+    .hamburger span{display:block;width:20px;height:1.5px;background:var(--text-muted);border-radius:2px;transition:background var(--t-fast);}
+    .hamburger:hover span{background:var(--text-secondary);}
 
     /* DRAWER */
-    .drawer-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.7);
-      z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.25s;
-    }
-    .drawer-overlay.open { opacity: 1; pointer-events: all; }
-    .drawer {
-      position: fixed; top: 0; right: 0; bottom: 0; width: min(360px, 92vw);
-      background: #111; z-index: 101; transform: translateX(100%);
-      transition: transform 0.25s ease; overflow-y: auto;
-      border-left: 1px solid #222;
-    }
-    .drawer.open { transform: translateX(0); }
-    .drawer-header {
-      padding: 28px 24px 20px; border-bottom: 1px solid #1a1a1a;
-      display: flex; justify-content: space-between; align-items: center;
-      position: sticky; top: 0; background: #111; z-index: 1;
-    }
-    .drawer-title {
-      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: #555; font-family: 'Courier New', monospace;
-    }
-    .drawer-close {
-      background: none; border: none; color: #555; cursor: pointer;
-      font-size: 20px; line-height: 1; padding: 2px 6px;
-    }
-    .drawer-section { padding: 24px; border-bottom: 1px solid #1a1a1a; }
-    .drawer-section-title {
-      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: #555; font-family: 'Courier New', monospace; margin-bottom: 16px;
-    }
+    .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:100;opacity:0;pointer-events:none;transition:opacity var(--t-mid);}
+    .drawer-overlay.open{opacity:1;pointer-events:all;}
+    .drawer{position:fixed;top:0;right:0;bottom:0;width:min(360px,92vw);background:var(--bg-card);z-index:101;transform:translateX(100%);transition:transform var(--t-mid);overflow-y:auto;border-left:1px solid var(--border-soft);padding-bottom:var(--safe-bottom);}
+    .drawer.open{transform:translateX(0);}
+    .drawer-header{padding:calc(24px + var(--safe-top)) 24px 20px;border-bottom:1px solid var(--border-dim);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg-card);z-index:1;}
+    .drawer-title{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);}
+    .drawer-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;line-height:1;padding:0;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:color var(--t-fast);}
+    .drawer-close:hover{color:var(--text-primary);}
+    .drawer-section{padding:24px;border-bottom:1px solid var(--border-dim);}
+    .drawer-section-title{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:18px;}
 
-    /* REP CALCULATOR */
-    .calc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .calc-label { font-size: 11px; color: #666; font-family: 'Courier New', monospace; margin-bottom: 6px; }
-    .calc-input {
-      width: 100%; background: #1a1a1a; border: 1px solid #2a2a2a; color: #e8e8e0;
-      font-family: 'Courier New', monospace; font-size: 16px; padding: 10px 12px;
-      border-radius: 4px; outline: none; transition: border-color 0.15s;
-    }
-    .calc-input:focus { border-color: #444; }
-    .calc-btn {
-      width: 100%; background: #1e1e1e; border: 1px solid #2a2a2a; color: #e8e8e0;
-      font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.15em;
-      text-transform: uppercase; padding: 12px; cursor: pointer; border-radius: 4px;
-      transition: background 0.15s; margin-bottom: 16px;
-    }
-    .calc-btn:hover { background: #252525; }
-    .calc-results { display: none; }
-    .calc-results.show { display: block; }
-    .calc-result-row {
-      display: grid; grid-template-columns: 1fr auto auto;
-      gap: 16px; padding: 9px 0; border-bottom: 1px solid #141414; align-items: center;
-    }
-    .calc-result-label { font-size: 13px; }
-    .calc-result-pct { font-size: 11px; color: #555; font-family: 'Courier New', monospace; }
-    .calc-result-val { font-size: 13px; font-family: 'Courier New', monospace; color: #e8e8e0; }
-    .calc-orm-display {
-      font-size: 11px; color: #666; font-family: 'Courier New', monospace;
-      margin-bottom: 14px; padding: 8px 0; border-bottom: 1px solid #141414;
-    }
-    .calc-orm-display span { color: #aaa; }
+    /* INPUTS */
+    .calc-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+    .calc-label{font-size:10px;color:var(--text-ghost);font-family:var(--font-mono);margin-bottom:7px;letter-spacing:0.08em;}
+    .calc-input{width:100%;background:var(--bg-input);border:1px solid var(--border-vis);color:var(--text-primary);font-family:var(--font-mono);font-size:16px;padding:11px 12px;border-radius:4px;outline:none;transition:border-color var(--t-fast);-webkit-appearance:none;}
+    .calc-input:focus{border-color:var(--text-ghost);}
+    .calc-btn{width:100%;background:var(--bg-input);border:1px solid var(--border-vis);color:var(--text-primary);font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;padding:13px;cursor:pointer;border-radius:4px;transition:background var(--t-fast),border-color var(--t-fast);margin-bottom:16px;}
+    .calc-btn:hover{background:#222;border-color:var(--text-ghost);}
 
-    /* PROGRESSION */
-    .prog-row { padding: 12px 0; border-bottom: 1px solid #141414; }
-    .prog-label { font-size: 11px; color: #888; font-family: 'Courier New', monospace; margin-bottom: 4px; }
-    .prog-rule { font-size: 13px; line-height: 1.5; color: #ccc; }
+    /* CALC RESULTS */
+    .calc-results{overflow:hidden;max-height:0;opacity:0;transition:max-height 0.4s ease,opacity 0.3s ease;}
+    .calc-results.show{max-height:600px;opacity:1;}
+    .calc-result-row{display:grid;grid-template-columns:1fr auto auto;gap:16px;padding:9px 0;border-bottom:1px solid var(--border-dim);align-items:center;}
+    .calc-result-label{font-size:13px;}
+    .calc-result-pct{font-size:11px;color:var(--text-muted);font-family:var(--font-mono);}
+    .calc-result-val{font-size:13px;font-family:var(--font-mono);color:var(--text-primary);}
+    .calc-orm-display{font-size:11px;color:var(--text-dim);font-family:var(--font-mono);margin-bottom:14px;padding:8px 0;border-bottom:1px solid var(--border-dim);}
+    .calc-orm-display span{color:var(--text-secondary);}
+
+    /* PROG */
+    .prog-row{padding:11px 0;border-bottom:1px solid var(--border-dim);}
+    .prog-label{font-size:10px;color:var(--text-dim);font-family:var(--font-mono);margin-bottom:5px;letter-spacing:0.05em;}
+    .prog-rule{font-size:13px;line-height:1.6;color:#ccc;}
 
     /* TABS */
-    .tabs-wrap {
-      border-bottom: 1px solid #1a1a1a; padding: 0 24px;
-      background: #0d0d0d; position: sticky; top: 0; z-index: 10;
-    }
-    .tabs {
-      max-width: 760px; margin: 0 auto; display: flex;
-      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
-    }
-    .tabs::-webkit-scrollbar { display: none; }
-    .tab {
-      background: none; border: none; border-bottom: 2px solid transparent;
-      color: #555; padding: 16px 18px 14px; cursor: pointer; font-size: 11px;
-      font-family: 'Courier New', monospace; letter-spacing: 0.1em;
-      text-transform: uppercase; white-space: nowrap;
-      transition: color 0.15s, border-color 0.15s;
-      display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
-    }
-    .tab-day { font-size: 10px; opacity: 0.7; }
+    .tabs-wrap{border-bottom:1px solid var(--border-dim);padding:0 24px;background:var(--bg-raised);position:sticky;top:0;z-index:10;}
+    .tabs{max-width:760px;margin:0 auto;display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+    .tabs::-webkit-scrollbar{display:none;}
+    .tab{background:none;border:none;border-bottom:2px solid transparent;color:var(--text-muted);padding:15px 16px 13px;cursor:pointer;font-size:10px;font-family:var(--font-mono);letter-spacing:0.12em;text-transform:uppercase;white-space:nowrap;transition:color var(--t-fast),border-color var(--t-fast);display:flex;flex-direction:column;align-items:flex-start;gap:3px;min-height:44px;justify-content:center;}
+    .tab-day{font-size:9px;opacity:0.6;}
 
     /* CONTENT */
-    .content { max-width: 760px; margin: 0 auto; padding: 32px 24px 120px; }
-    .day-header { margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-start; }
-    .day-title { font-size: 32px; font-weight: 400; letter-spacing: -0.02em; margin-bottom: 6px; }
-    .day-sub { color: #777; font-size: 13px; font-family: 'Courier New', monospace; }
-    .day-duration { font-size: 11px; color: #444; font-family: 'Courier New', monospace; padding-top: 4px; }
+    .content{max-width:760px;margin:0 auto;padding:32px 24px calc(120px + var(--safe-bottom));animation:fadeIn 0.25s ease both;}
+    .day-header{margin-bottom:32px;display:flex;justify-content:space-between;align-items:flex-start;}
+    .day-title{font-size:30px;font-weight:400;letter-spacing:-0.02em;margin-bottom:6px;font-family:var(--font-serif);}
+    .day-sub{color:var(--text-dim);font-size:12px;font-family:var(--font-mono);font-weight:300;}
+    .day-duration{font-size:10px;color:var(--text-ghost);font-family:var(--font-mono);padding-top:4px;}
 
     /* SECTIONS */
-    .section { margin-bottom: 24px; }
-    .section-toggle {
-      width: 100%; background: none; border: none;
-      border-top: 1px solid #1e1e1e; border-left: 3px solid transparent;
-      padding: 12px 0 12px 14px; display: flex; justify-content: space-between;
-      align-items: center; cursor: pointer; text-align: left;
-    }
-    .section-label {
-      font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
-      color: #999; font-family: 'Courier New', monospace;
-    }
-    .section-caret { color: #444; font-size: 10px; padding-right: 4px; }
-    .section-items { padding-left: 14px; }
-    .section-items.hidden { display: none; }
-    .item {
-      padding: 12px 0; border-bottom: 1px solid #141414;
-      display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: start;
-    }
-    .item-name { font-size: 15px; font-weight: 400; }
-    .item-note { font-size: 12px; color: #555; font-family: 'Courier New', monospace; line-height: 1.5; margin-top: 4px; }
-    .item-sets { font-size: 12px; font-family: 'Courier New', monospace; white-space: nowrap; padding-top: 2px; opacity: 0.85; }
+    .section{margin-bottom:2px;}
+    .section-toggle{width:100%;background:none;border:none;border-top:1px solid var(--border-mid);border-left:3px solid transparent;padding:13px 0 13px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;text-align:left;transition:background var(--t-fast);min-height:44px;}
+    .section-toggle:hover{background:rgba(255,255,255,0.02);}
+    .section-label{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);}
+    .section-caret{color:var(--text-ghost);font-size:9px;padding-right:6px;transition:transform var(--t-fast);}
+    .section-caret.open{transform:rotate(180deg);}
+    .section-body{overflow:hidden;max-height:0;opacity:0;transition:max-height 0.35s ease,opacity 0.25s ease;}
+    .section-body.open{max-height:2000px;opacity:1;}
+    .section-items{padding-left:14px;}
+    .item{padding:12px 0;border-bottom:1px solid var(--border-dim);display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start;}
+    .item-name{font-size:15px;font-weight:400;line-height:1.3;}
+    .item-note{font-size:11px;color:var(--text-muted);font-family:var(--font-mono);line-height:1.6;margin-top:5px;font-weight:300;}
+    .item-sets{font-size:11px;font-family:var(--font-mono);white-space:nowrap;padding-top:3px;opacity:0.85;font-weight:300;}
 
-    /* OFF DAYS CONTENT */
-    .offday-block { margin-bottom: 32px; }
-    .offday-type {
-      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: #555; font-family: 'Courier New', monospace; margin-bottom: 16px;
-      padding-bottom: 12px; border-bottom: 1px solid #1a1a1a;
-    }
-    .offday-row {
-      display: flex; justify-content: space-between; align-items: baseline;
-      padding: 10px 0; border-bottom: 1px solid #141414;
-    }
-    .offday-name { font-size: 15px; }
-    .offday-val { font-size: 12px; font-family: 'Courier New', monospace; color: #888; }
-    .offday-note { font-size: 12px; color: #555; font-family: 'Courier New', monospace; padding: 8px 0 4px; line-height: 1.5; }
+    /* OFF DAYS */
+    .offday-block{margin-bottom:36px;}
+    .offday-type{font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border-soft);}
+    .offday-row{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--border-dim);}
+    .offday-name{font-size:15px;}
+    .offday-val{font-size:11px;font-family:var(--font-mono);color:var(--text-dim);font-weight:300;}
+    .offday-note{font-size:11px;color:var(--text-muted);font-family:var(--font-mono);padding:8px 0 4px;line-height:1.6;font-weight:300;}
 
     /* BOTTOM */
-    .bottom { border-top: 1px solid #1a1a1a; background: #0d0d0d; }
-    .bottom-inner { max-width: 760px; margin: 0 auto; padding: 32px 24px; }
-    .section-heading {
-      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: #555; font-family: 'Courier New', monospace; margin-bottom: 16px;
-    }
-    .baselines { margin-bottom: 40px; }
-    .baseline-row {
-      display: grid; grid-template-columns: 1fr auto auto; gap: 24px;
-      padding: 10px 0; border-bottom: 1px solid #141414; align-items: center;
-    }
-    .baseline-lift { font-size: 14px; }
-    .baseline-orm { font-size: 12px; color: #555; font-family: 'Courier New', monospace; }
-    .baseline-working { font-size: 12px; color: #e8e8e0; font-family: 'Courier New', monospace; }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .note-row { font-size: 13px; color: #777; padding: 6px 0; border-bottom: 1px solid #141414; line-height: 1.4; }
-    .off-days { margin-top: 32px; padding-top: 24px; border-top: 1px solid #1a1a1a; }
-    .off-col { font-size: 13px; color: #666; line-height: 1.6; }
-    .off-col span { color: #888; }
+    .bottom{border-top:1px solid var(--border-dim);background:var(--bg-raised);}
+    .bottom-inner{max-width:760px;margin:0 auto;padding:36px 24px calc(24px + var(--safe-bottom));}
+    .section-heading{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:16px;}
+    .baselines{margin-bottom:44px;}
+    .baseline-row{display:grid;grid-template-columns:1fr auto auto auto;gap:12px;padding:10px 0;border-bottom:1px solid var(--border-dim);align-items:center;}
+    .baseline-lift{font-size:14px;}
+    .baseline-orm{font-size:11px;color:var(--text-muted);font-family:var(--font-mono);font-weight:300;}
+    .baseline-working{font-size:11px;color:var(--text-primary);font-family:var(--font-mono);font-weight:300;}
+    .baseline-edit-btn{background:none;border:1px solid var(--border-vis);color:var(--text-ghost);cursor:pointer;font-family:var(--font-mono);font-size:10px;border-radius:3px;letter-spacing:0.05em;transition:border-color var(--t-fast),color var(--t-fast);white-space:nowrap;min-width:44px;min-height:36px;display:flex;align-items:center;justify-content:center;}
+    .baseline-edit-btn:hover{border-color:var(--text-muted);color:var(--text-secondary);}
 
-    /* FLOATING TIMER */
-    .timer-bubble {
-      position: fixed; bottom: 32px; right: 24px;
-      width: 72px; height: 72px; border-radius: 50%;
-      background: #1a1a1a; border: 2px solid #2a2a2a;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      cursor: pointer; z-index: 50; user-select: none;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
-      transition: border-color 0.2s, transform 0.1s;
-      touch-action: none;
-    }
-    .timer-bubble:active { transform: scale(0.95); }
-    .timer-time {
-      font-size: 15px; font-family: 'Courier New', monospace;
-      color: #e8e8e0; line-height: 1; font-weight: 400;
-    }
-    .timer-label {
-      font-size: 8px; font-family: 'Courier New', monospace;
-      color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 3px;
-    }
-    .timer-ring {
-      position: absolute; inset: -3px; border-radius: 50%;
-      pointer-events: none;
-    }
+    /* MODAL */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity var(--t-mid);}
+    .modal-overlay.open{opacity:1;pointer-events:all;}
+    .modal{background:var(--bg-card);border:1px solid var(--border-vis);border-radius:8px;padding:28px 24px;width:100%;max-width:340px;transform:translateY(20px);transition:transform var(--t-mid);}
+    .modal-overlay.open .modal{transform:translateY(0);}
+    .modal-title{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:8px;}
+    .modal-lift-name{font-size:22px;font-weight:400;margin-bottom:22px;color:var(--text-primary);font-family:var(--font-serif);}
+    .modal-orm-preview{font-size:11px;color:var(--text-ghost);font-family:var(--font-mono);margin-bottom:20px;min-height:18px;transition:color var(--t-fast);line-height:1.5;font-weight:300;}
+    .modal-orm-preview.has-value{color:var(--text-secondary);}
+    .modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px;}
+    .modal-save{background:var(--bg-input);border:1px solid #3a3a3a;color:var(--text-primary);font-family:var(--font-mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;padding:13px;cursor:pointer;border-radius:4px;transition:background var(--t-fast),border-color var(--t-fast);}
+    .modal-save:hover{background:#252525;border-color:var(--text-muted);}
+    .modal-cancel{background:none;border:1px solid var(--border-soft);color:var(--text-muted);font-family:var(--font-mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;padding:13px;cursor:pointer;border-radius:4px;transition:border-color var(--t-fast),color var(--t-fast);}
+    .modal-cancel:hover{border-color:#333;color:var(--text-dim);}
+    .modal-reset{grid-column:1/-1;background:none;border:none;color:var(--text-faint);font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:10px;cursor:pointer;text-align:center;transition:color var(--t-fast);}
+    .modal-reset:hover{color:var(--text-dim);}
 
-    /* TIMER PANEL */
-    .timer-panel {
-      position: fixed; bottom: 116px; right: 24px;
-      background: #111; border: 1px solid #222; border-radius: 8px;
-      padding: 16px; z-index: 50; min-width: 180px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.6);
-      display: none;
-    }
-    .timer-panel.show { display: block; }
-    .timer-panel-title {
-      font-size: 10px; letter-spacing: 0.2em; color: #555;
-      font-family: 'Courier New', monospace; text-transform: uppercase; margin-bottom: 12px;
-    }
-    .timer-presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-    .timer-preset {
-      background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa;
-      font-family: 'Courier New', monospace; font-size: 12px;
-      padding: 8px 4px; cursor: pointer; border-radius: 4px; text-align: center;
-      transition: all 0.15s;
-    }
-    .timer-preset:hover { background: #222; color: #e8e8e0; border-color: #444; }
-    .timer-preset.active { border-color: #666; color: #e8e8e0; }
-    .timer-controls { display: flex; gap: 8px; }
-    .timer-ctrl-btn {
-      flex: 1; background: #1a1a1a; border: 1px solid #2a2a2a; color: #aaa;
-      font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.1em;
-      text-transform: uppercase; padding: 8px 4px; cursor: pointer; border-radius: 4px;
-      transition: all 0.15s;
-    }
-    .timer-ctrl-btn:hover { background: #222; color: #e8e8e0; }
+    /* TIMER */
+    .timer-bubble{position:fixed;bottom:calc(32px + var(--safe-bottom));right:24px;width:72px;height:72px;border-radius:50%;background:var(--bg-input);border:2px solid var(--border-vis);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:50;user-select:none;box-shadow:0 4px 24px rgba(0,0,0,0.6);transition:border-color var(--t-mid),transform 0.1s;touch-action:none;}
+    .timer-bubble:active{transform:scale(0.95);}
+    .timer-time{font-size:14px;font-family:var(--font-mono);color:var(--text-primary);line-height:1;font-weight:300;}
+    .timer-status{font-size:8px;font-family:var(--font-mono);color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+    .timer-ring{position:absolute;inset:-3px;border-radius:50%;pointer-events:none;}
+    .timer-panel{position:fixed;bottom:calc(116px + var(--safe-bottom));right:24px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:8px;padding:16px;z-index:50;min-width:188px;box-shadow:0 8px 32px rgba(0,0,0,0.7);opacity:0;pointer-events:none;transform:translateY(8px) scale(0.97);transition:opacity var(--t-fast),transform var(--t-fast);transform-origin:bottom right;}
+    .timer-panel.show{opacity:1;pointer-events:all;transform:translateY(0) scale(1);}
+    .timer-panel-title{font-size:9px;letter-spacing:0.25em;color:var(--text-muted);font-family:var(--font-mono);text-transform:uppercase;margin-bottom:12px;}
+    .timer-presets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+    .timer-preset{background:var(--bg-input);border:1px solid var(--border-vis);color:var(--text-secondary);font-family:var(--font-mono);font-size:12px;padding:10px 4px;cursor:pointer;border-radius:4px;text-align:center;transition:background var(--t-fast),border-color var(--t-fast),color var(--t-fast);font-weight:300;}
+    .timer-preset:hover{background:#222;color:var(--text-primary);border-color:var(--text-ghost);}
+    .timer-preset.active{border-color:var(--text-dim);color:var(--text-primary);}
+    .timer-controls{display:flex;gap:8px;}
+    .timer-ctrl-btn{flex:1;background:var(--bg-input);border:1px solid var(--border-vis);color:var(--text-secondary);font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:9px 4px;cursor:pointer;border-radius:4px;transition:background var(--t-fast),color var(--t-fast);font-weight:300;}
+    .timer-ctrl-btn:hover{background:#222;color:var(--text-primary);}
 
+    /* ANIMATIONS */
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-    /* EDITABLE BASELINES */
-    .baseline-row {
-      display: grid; grid-template-columns: 1fr auto auto auto; gap: 12px;
-      padding: 10px 0; border-bottom: 1px solid #141414; align-items: center;
-    }
-    .baseline-lift { font-size: 14px; }
-    .baseline-orm { font-size: 12px; color: #555; font-family: 'Courier New', monospace; }
-    .baseline-working { font-size: 12px; color: #e8e8e0; font-family: 'Courier New', monospace; }
-    .baseline-edit-btn {
-      background: none; border: 1px solid #2a2a2a; color: #444; cursor: pointer;
-      font-family: 'Courier New', monospace; font-size: 10px; padding: 4px 8px;
-      border-radius: 3px; letter-spacing: 0.05em; transition: all 0.15s; white-space: nowrap;
-    }
-    .baseline-edit-btn:hover { border-color: #555; color: #aaa; }
-
-    /* BASELINE MODAL */
-    .modal-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-      z-index: 200; display: flex; align-items: center; justify-content: center;
-      padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.2s;
-    }
-    .modal-overlay.open { opacity: 1; pointer-events: all; }
-    .modal {
-      background: #111; border: 1px solid #2a2a2a; border-radius: 8px;
-      padding: 28px 24px; width: 100%; max-width: 340px;
-      transform: translateY(16px); transition: transform 0.2s;
-    }
-    .modal-overlay.open .modal { transform: translateY(0); }
-    .modal-title {
-      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
-      color: #555; font-family: 'Courier New', monospace; margin-bottom: 6px;
-    }
-    .modal-lift-name {
-      font-size: 20px; font-weight: 400; margin-bottom: 20px; color: #e8e8e0;
-    }
-    .modal-orm-preview {
-      font-size: 12px; color: #666; font-family: 'Courier New', monospace;
-      margin-bottom: 20px; min-height: 18px; transition: color 0.2s;
-    }
-    .modal-orm-preview.has-value { color: #aaa; }
-    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-    .modal-save {
-      background: #1e1e1e; border: 1px solid #3a3a3a; color: #e8e8e0;
-      font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.12em;
-      text-transform: uppercase; padding: 12px; cursor: pointer; border-radius: 4px;
-      transition: all 0.15s;
-    }
-    .modal-save:hover { background: #2a2a2a; border-color: #555; }
-    .modal-cancel {
-      background: none; border: 1px solid #222; color: #555;
-      font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.12em;
-      text-transform: uppercase; padding: 12px; cursor: pointer; border-radius: 4px;
-      transition: all 0.15s;
-    }
-    .modal-cancel:hover { border-color: #333; color: #777; }
-    .modal-reset {
-      grid-column: 1 / -1; background: none; border: none; color: #333;
-      font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.1em;
-      text-transform: uppercase; padding: 8px; cursor: pointer; text-align: center;
-      transition: color 0.15s; margin-top: 4px;
-    }
-    .modal-reset:hover { color: #666; }
-
-    @media (max-width: 480px) {
-      .two-col { grid-template-columns: 1fr; }
-      .baseline-row { grid-template-columns: 1fr auto; }
-      .baseline-orm { display: none; }
+    @media(max-width:480px){
+      .baseline-row{grid-template-columns:1fr auto auto;}
+      .baseline-orm{display:none;}
     }
   </style>
 </head>
 <body>
 
-<!-- DRAWER OVERLAY -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer-overlay" id="drawerOverlay"></div>
 
-<!-- DRAWER -->
 <div class="drawer" id="drawer">
   <div class="drawer-header">
     <span class="drawer-title">Program Info</span>
-    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+    <button class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">&#x2715;</button>
   </div>
-
-  <!-- REP CALCULATOR -->
   <div class="drawer-section">
     <div class="drawer-section-title">Rep Max Calculator</div>
     <div class="calc-row">
-      <div>
-        <div class="calc-label">Weight (lb)</div>
-        <input class="calc-input" type="number" id="calcWeight" placeholder="225" inputmode="numeric" />
-      </div>
-      <div>
-        <div class="calc-label">Reps</div>
-        <input class="calc-input" type="number" id="calcReps" placeholder="5" inputmode="numeric" min="1" max="30" />
-      </div>
+      <div><div class="calc-label">Weight (lb)</div><input class="calc-input" type="number" id="calcWeight" placeholder="225" inputmode="decimal" /></div>
+      <div><div class="calc-label">Reps</div><input class="calc-input" type="number" id="calcReps" placeholder="5" inputmode="numeric" min="1" max="30" /></div>
     </div>
-    <button class="calc-btn" onclick="calculate()">Calculate</button>
+    <button class="calc-btn" id="calcBtn">Calculate</button>
     <div class="calc-results" id="calcResults">
-      <div class="calc-orm-display">Est. 1RM: <span id="calcOrm">—</span></div>
+      <div class="calc-orm-display">Est. 1RM: <span id="calcOrm">&#x2014;</span></div>
       <div id="calcRows"></div>
     </div>
   </div>
-
-  <!-- PROGRESSION RULES -->
   <div class="drawer-section">
     <div class="drawer-section-title">Progression Rules</div>
-    <div class="prog-row"><div class="prog-label">Primary Lifts</div><div class="prog-rule">Hit top reps → +2.5–5 lb next session. Miss reps → hold load.</div></div>
-    <div class="prog-row"><div class="prog-label">AR-7 Blocks</div><div class="prog-rule">Reduce rest first → add reps → small load increase every 2–3 weeks.</div></div>
-    <div class="prog-row"><div class="prog-label">Micro Arms (Push/Pull)</div><div class="prog-rule">Add reps first, then load slowly. Stop 1–2 reps from failure.</div></div>
-    <div class="prog-row"><div class="prog-label">Close-Grip Bench</div><div class="prog-rule">Same logic as Bench and OHP — hit top reps, earn the load.</div></div>
-    <div class="prog-row"><div class="prog-label">EZ-Bar Curl (Sunday)</div><div class="prog-rule">Add reps first (6→8), then +2.5 lb.</div></div>
-    <div class="prog-row"><div class="prog-label">Bulgarian Split Squat</div><div class="prog-rule">Add reps before load. Keep it submaximal — legs are pre-fatigued.</div></div>
-    <div class="prog-row"><div class="prog-label">Single-Leg RDL</div><div class="prog-rule">Do not aggressively progress. Pattern quality is the goal. Add a 3-sec pause at the bottom before adding load.</div></div>
+    <div class="prog-row"><div class="prog-label">Primary Lifts</div><div class="prog-rule">Hit top reps &#x2192; +2.5&#x2013;5 lb next session. Miss reps &#x2192; hold load.</div></div>
+    <div class="prog-row"><div class="prog-label">AR-7 Blocks</div><div class="prog-rule">Reduce rest first &#x2192; add reps &#x2192; small load increase every 2&#x2013;3 weeks.</div></div>
+    <div class="prog-row"><div class="prog-label">Micro Arms (Push/Pull)</div><div class="prog-rule">Add reps first, then load slowly. Stop 1&#x2013;2 reps from failure.</div></div>
+    <div class="prog-row"><div class="prog-label">Close-Grip Bench</div><div class="prog-rule">Same logic as Bench and OHP &#x2014; hit top reps, earn the load.</div></div>
+    <div class="prog-row"><div class="prog-label">EZ-Bar Curl (Sunday)</div><div class="prog-rule">Add reps first (6&#x2192;8), then +2.5 lb.</div></div>
+    <div class="prog-row"><div class="prog-label">Bulgarian Split Squat</div><div class="prog-rule">Add reps before load. Keep it submaximal &#x2014; legs are pre-fatigued.</div></div>
+    <div class="prog-row"><div class="prog-label">Single-Leg RDL</div><div class="prog-rule">Do not aggressively progress. Pattern quality is the goal. Add a 3-sec pause at bottom before adding load.</div></div>
     <div class="prog-row"><div class="prog-label">Hip Thrust</div><div class="prog-rule">+5 lb every 2 weeks if form is clean through full ROM.</div></div>
-    <div class="prog-row"><div class="prog-label">Landmine Rotations</div><div class="prog-rule">Train speed and pattern first — load increases only every 3–4 weeks.</div></div>
+    <div class="prog-row"><div class="prog-label">Landmine Rotations</div><div class="prog-rule">Train speed and pattern first &#x2014; load increases only every 3&#x2013;4 weeks.</div></div>
     <div class="prog-row"><div class="prog-label">Farmer Carries</div><div class="prog-rule">Increase distance before load.</div></div>
   </div>
-
-  <!-- RECOVERY -->
   <div class="drawer-section">
     <div class="drawer-section-title">Recovery Guardrails</div>
-    <div class="prog-row"><div class="prog-rule" style="color:#777">— Deload every 6–8 weeks</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:#777">— Eat enough carbs</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:#777">— Sleep is mandatory</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:#777">— Never AR-7: deadlifts, heavy squats, Olympic lifts</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Deload every 6&#x2013;8 weeks</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Eat enough carbs</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Sleep is mandatory</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Never AR-7: deadlifts, heavy squats, Olympic lifts</div></div>
   </div>
-
-  <!-- GOLF NOTES -->
   <div class="drawer-section">
     <div class="drawer-section-title">Golf Notes</div>
-    <div class="prog-row"><div class="prog-rule" style="color:#777">— Landmine + cable rotations are pattern training — ego stays outside</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:#777">— Hip mobility unlocks rotational power you already have</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:#777">— Farmer carries = grip training + spinal decompression</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:#777">— Pallof Press builds anti-rotation stability that holds under fatigue</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Landmine + cable rotations are pattern training &#x2014; ego stays outside</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Hip mobility unlocks rotational power you already have</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Farmer carries = grip training + spinal decompression</div></div>
+    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Pallof Press builds anti-rotation stability that holds under fatigue</div></div>
   </div>
 </div>
 
-<!-- HEADER -->
 <div class="header">
   <div class="header-inner">
     <div class="header-eyebrow">AR-7 Hybrid Program</div>
     <h1>Strength + Hypertrophy</h1>
-    <div class="header-sub">Thu–Sun · 4 Days/Week · Golf Athleticism Integrated</div>
+    <div class="header-sub">Thu&#x2013;Sun &#xB7; 4 Days/Week &#xB7; Golf Athleticism Integrated</div>
   </div>
-  <button class="hamburger" onclick="openDrawer()" aria-label="Menu">
+  <button class="hamburger" id="hamburgerBtn" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
 </div>
 
-<div class="tabs-wrap">
-  <div class="tabs" id="tabs"></div>
-</div>
-
+<div class="tabs-wrap"><div class="tabs" id="tabs"></div></div>
 <div class="content" id="content"></div>
 
 <div class="bottom" id="bottomSection">
@@ -416,586 +239,241 @@
   </div>
 </div>
 
-<!-- FLOATING TIMER -->
 <div class="timer-panel" id="timerPanel">
   <div class="timer-panel-title">Rest Timer</div>
-  <div class="timer-presets">
-    <div class="timer-preset" onclick="setTimer(60)">1:00</div>
-    <div class="timer-preset" onclick="setTimer(90)">1:30</div>
-    <div class="timer-preset" onclick="setTimer(120)">2:00</div>
-    <div class="timer-preset" onclick="setTimer(180)">3:00</div>
+  <div class="timer-presets" id="timerPresets">
+    <div class="timer-preset" data-seconds="60">1:00</div>
+    <div class="timer-preset" data-seconds="90">1:30</div>
+    <div class="timer-preset" data-seconds="120">2:00</div>
+    <div class="timer-preset" data-seconds="180">3:00</div>
   </div>
   <div class="timer-controls">
-    <button class="timer-ctrl-btn" onclick="startPauseTimer()">Start</button>
-    <button class="timer-ctrl-btn" onclick="resetTimer()">Reset</button>
+    <button class="timer-ctrl-btn" id="timerStartBtn">Start</button>
+    <button class="timer-ctrl-btn" id="timerResetBtn">Reset</button>
   </div>
 </div>
 
-<div class="timer-bubble" id="timerBubble" onclick="toggleTimerPanel()">
+<div class="timer-bubble" id="timerBubble">
   <svg class="timer-ring" viewBox="0 0 80 80">
     <circle cx="40" cy="40" r="36" fill="none" stroke="#1e1e1e" stroke-width="2"/>
     <circle id="timerArc" cx="40" cy="40" r="36" fill="none" stroke="#555" stroke-width="2"
       stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round"
-      transform="rotate(-90 40 40)" style="transition: stroke-dashoffset 0.5s linear, stroke 0.3s"/>
+      transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.5s linear,stroke 0.3s"/>
   </svg>
   <div class="timer-time" id="timerDisplay">REST</div>
-  <div class="timer-label" id="timerLabel">TAP</div>
+  <div class="timer-status" id="timerStatus">TAP</div>
 </div>
 
-<script>
-// ─── DATA ───────────────────────────────────────────────────────
-const days = [
-  {
-    id:"push", day:"Thursday", label:"PUSH",
-    sub:"Chest · Shoulders · Triceps", accent:"#E84B2A", duration:"~70 min",
-    sections:[
-      {title:"Warm-Up", items:[
-        {name:"Dip Position Leg Raises", sets:"2 × 10", note:""},
-        {name:"Bodyweight Dips", sets:"2 × 10", note:"Then ramp sets into Bench Press"},
-      ]},
-      {title:"Primary Strength", items:[
-        {name:"Barbell Bench Press", sets:"4 × 4–6 @ 210–215 lb", note:"2–3 min rest · Progress to 220 when hitting 6 across all 4 sets"},
-        {name:"Standing Overhead Press", sets:"3 × 5–6 @ 125–130 lb", note:"2 min rest · Build from 125, earn 130"},
-      ]},
-      {title:"AR-7 Block — Chest Focus", ar7:true, items:[
-        {name:"Action: Incline DB Press", sets:"6–8 reps", note:""},
-        {name:"Reaction: DB Fly or Pec Deck", sets:"12–15 reps", note:"7 rounds · 15–20 sec rest"},
-      ]},
-      {title:"Accessories", items:[
-        {name:"Dumbbell Lateral Raises", sets:"3 × 12–15", note:""},
-      ]},
-      {title:"Micro Arm Add-On — Triceps", items:[
-        {name:"Rope Pushdowns or Overhead Cable Extensions", sets:"3 × 10–12", note:"~60 sec rest"},
-      ]},
-    ]
-  },
-  {
-    id:"pull", day:"Friday", label:"PULL",
-    sub:"Back · Rear Delts · Biceps", accent:"#2A7BE8", duration:"~75 min",
-    sections:[
-      {title:"Warm-Up", items:[
-        {name:"Dip Position Leg Raises", sets:"2 × 10", note:"Then ramp sets into Pull-Ups"},
-      ]},
-      {title:"Primary Strength", items:[
-        {name:"Weighted Pull-Ups or Lat Pulldown", sets:"4 × 5–6", note:"2 min rest"},
-        {name:"Barbell Row or Chest-Supported Row", sets:"3 × 5–6", note:"2 min rest"},
-      ]},
-      {title:"AR-7 Block — Back Focus", ar7:true, items:[
-        {name:"Action: One-Arm DB Row", sets:"6–8 reps / side", note:""},
-        {name:"Reaction: Straight-Arm Pulldown or Band Pullover", sets:"12–15 reps", note:"7 rounds · minimal rest"},
-      ]},
-      {title:"Accessories", items:[
-        {name:"Dirty 30s", sets:"3 × 15", note:"Supinated ×10 → Neutral ×10 → Hip drive neutral ×10"},
-      ]},
-      {title:"Micro Arm Add-On — Biceps", items:[
-        {name:"EZ-Bar Curl or DB Curl", sets:"3 × 10–12", note:"~60 sec rest"},
-      ]},
-      {title:"Golf Add-On", items:[
-        {name:"Farmer Carries or Dead Hangs", sets:"2 × 30–40m / 2 × 20–30 sec", note:"~60 sec rest · Finish session here"},
-      ]},
-    ]
-  },
-  {
-    id:"legs", day:"Saturday", label:"LEGS",
-    sub:"Quads · Hamstrings · Glutes · Core", accent:"#2AE87B", duration:"~80 min",
-    sections:[
-      {title:"Warm-Up", items:[
-        {name:"Feet Elevated Side Crunches", sets:"2 × 5", note:"Neutral push-up → lateral flexion → back to neutral"},
-        {name:"90/90 Hip Switches", sets:"2 × 10", note:""},
-        {name:"Hip CARs", sets:"2 × 5 / side", note:"Then ramp sets into Squat"},
-      ]},
-      {title:"Primary Strength", items:[
-        {name:"Back Squat or Safety Bar Squat", sets:"4 × 3–5 @ 275–285 lb", note:"2–3 min rest · 295 is next target"},
-        {name:"Romanian Deadlift", sets:"3 × 5–6 @ 185–195 lb", note:"2 min rest · Pattern over load"},
-      ]},
-      {title:"AR-7 Block — Quad Focus", ar7:true, items:[
-        {name:"Action: Leg Press or Front Squat", sets:"6–8 reps", note:""},
-        {name:"Reaction: Sissy Squats", sets:"10–12 reps", note:"7 rounds · 15–20 sec rest"},
-      ]},
-      {title:"Core / Anti-Rotation", items:[
-        {name:"Hanging Leg Raises or Ab Wheel", sets:"3 × 10–12", note:"Alternate weekly with Pallof Press"},
-        {name:"Pallof Press (alternate week)", sets:"3 × 10–12 / side", note:"Light-moderate, slow and controlled"},
-      ]},
-      {title:"Golf Power Add-On", items:[
-        {name:"Landmine Rotations", sets:"3 × 8–10 / side", note:"~60 sec rest · Pattern training, not strength work"},
-      ]},
-    ]
-  },
-  {
-    id:"arms", day:"Sunday", label:"ARMS + LEGS",
-    sub:"Biceps · Triceps · Unilateral Legs · Glutes", accent:"#E8C42A", duration:"~70 min",
-    sections:[
-      {title:"Warm-Up", items:[
-        {name:"Wrist Circles + Forearm Stretch", sets:"2 × 10 each direction", note:""},
-        {name:"Band Pull-Aparts", sets:"2 × 15", note:"Shoulder health primer"},
-        {name:"Cable Rope Pushdown (light)", sets:"1 × 20", note:"Elbow warm-up"},
-        {name:"EZ-Bar Curl (light)", sets:"1 × 15", note:"Then ramp into Close-Grip Bench"},
-      ]},
-      {title:"Primary Strength — Triceps", items:[
-        {name:"Close-Grip Bench Press", sets:"4 × 5–6 @ 155–165 lb", note:"2 min rest · Hit 6 across all 4 to earn next load"},
-      ]},
-      {title:"Primary Strength — Biceps", items:[
-        {name:"EZ-Bar Curl or Barbell Curl", sets:"4 × 6–8", note:"90 sec rest · 3 sec eccentric, no body English"},
-      ]},
-      {title:"AR-7 Block — Triceps Focus", ar7:true, items:[
-        {name:"Action: Overhead Cable Extension or Skull Crusher", sets:"8–10 reps", note:"Long head stretch position"},
-        {name:"Reaction: Rope Pushdown", sets:"12–15 reps", note:"7 rounds · 15–20 sec rest · Lateral head in shortened position"},
-      ]},
-      {title:"Superset — Biceps Hypertrophy", items:[
-        {name:"A1: Incline DB Curl", sets:"3 × 10–12", note:"Long head stretch"},
-        {name:"A2: Hammer Curl", sets:"3 × 10–12", note:"60 sec between supersets · Brachialis + grip transfer"},
-      ]},
-      {title:"Unilateral Legs — Quad", items:[
-        {name:"Bulgarian Split Squat", sets:"3 × 8–10 / leg @ 50–70 lb DBs", note:"90 sec rest · Submaximal — legs are pre-fatigued from Saturday"},
-      ]},
-      {title:"Unilateral Legs — Posterior Chain", items:[
-        {name:"Single-Leg RDL", sets:"3 × 8–10 / leg", note:"90 sec rest · Light-moderate · Pattern quality over load"},
-      ]},
-      {title:"Glute Isolation", items:[
-        {name:"Hip Thrust or Cable Pull-Through", sets:"3 × 12–15", note:"60 sec rest · Full hip extension, controlled squeeze"},
-      ]},
-      {title:"Calves + Golf Finish", items:[
-        {name:"Standing Calf Raise", sets:"3 × 15–20", note:"60 sec rest · Full ROM, slow eccentric"},
-        {name:"Dead Hang", sets:"2 × 20–30 sec", note:"Finish session here · Decompression + grip endurance"},
-      ]},
-    ]
-  },
-  {
-    id:"off", day:"Mon–Wed", label:"OFF DAYS",
-    sub:"Recovery · Conditioning · Mobility", accent:"#9B8EE8", duration:"Optional",
-    isOff: true,
-  },
-];
-
-// ─── STATE ──────────────────────────────────────────────────────
-let activeDay = "push";
-const openSections = {};
-
-// ─── RENDER ─────────────────────────────────────────────────────
-function render() {
-  const day = days.find(d => d.id === activeDay);
-
-  document.getElementById("tabs").innerHTML = days.map(d => `
-    <button class="tab" onclick="switchDay('${d.id}')"
-      style="border-bottom-color:${activeDay===d.id ? d.accent : 'transparent'};
-             color:${activeDay===d.id ? d.accent : '#555'}">
-      <span class="tab-day">${d.day}</span>${d.label}
-    </button>`).join("");
-
-  document.getElementById("bottomSection").style.display = day.isOff ? "none" : "block";
-
-  if (day.isOff) {
-    renderOffDays(day);
-    return;
-  }
-
-  const sections = day.sections.map((s, si) => {
-    const key = `${day.id}-${si}`;
-    if (!(key in openSections)) openSections[key] = true;
-    const open = openSections[key];
-    const items = s.items.map(item => `
-      <div class="item">
-        <div>
-          <div class="item-name">${item.name}</div>
-          ${item.note ? `<div class="item-note">${item.note}</div>` : ""}
-        </div>
-        <div class="item-sets" style="color:${day.accent}">${item.sets}</div>
-      </div>`).join("");
-    return `
-      <div class="section">
-        <button class="section-toggle" onclick="toggleSection('${key}')"
-          style="border-top-color:${s.ar7 ? day.accent+'44' : '#1e1e1e'};
-                 border-left-color:${s.ar7 ? day.accent : 'transparent'}">
-          <span class="section-label" style="color:${s.ar7 ? day.accent : '#999'}">
-            ${s.ar7 ? '<span style="margin-right:8px;opacity:0.7">◆</span>' : ''}${s.title}
-          </span>
-          <span class="section-caret">${open ? "▲" : "▼"}</span>
-        </button>
-        <div class="section-items${open ? '' : ' hidden'}">${items}</div>
-      </div>`;
-  }).join("");
-
-  document.getElementById("content").innerHTML = `
-    <div class="day-header">
-      <div>
-        <div class="day-title" style="color:${day.accent}">${day.label}</div>
-        <div class="day-sub">${day.sub}</div>
-      </div>
-      <div class="day-duration">${day.duration}</div>
-    </div>${sections}`;
-}
-
-function renderOffDays(day) {
-  document.getElementById("content").innerHTML = `
-    <div class="day-header">
-      <div>
-        <div class="day-title" style="color:${day.accent}">${day.label}</div>
-        <div class="day-sub">${day.sub}</div>
-      </div>
-      <div class="day-duration">${day.duration}</div>
-    </div>
-
-    <div class="offday-block">
-      <div class="offday-type">Jump Rope — Recovery Day</div>
-      <div class="offday-row"><span class="offday-name">Steady State</span><span class="offday-val">10–15 min</span></div>
-      <div class="offday-note">Easy pace · Nasal breathing only · Not a conditioning session</div>
-    </div>
-
-    <div class="offday-block">
-      <div class="offday-type">Jump Rope — Conditioning Day</div>
-      <div class="offday-row"><span class="offday-name">Work Interval</span><span class="offday-val">1 min fast</span></div>
-      <div class="offday-row"><span class="offday-name">Rest Interval</span><span class="offday-val">1 min easy</span></div>
-      <div class="offday-row"><span class="offday-name">Rounds</span><span class="offday-val">5</span></div>
-      <div class="offday-note">Total ~10 min · Push pace on work intervals · Walk or slow spin on rest</div>
-    </div>
-
-    <div class="offday-block">
-      <div class="offday-type">Mobility — Optional</div>
-      <div class="offday-row"><span class="offday-name">90/90 Hip Switches</span><span class="offday-val">2 × 10</span></div>
-      <div class="offday-row"><span class="offday-name">Hip CARs</span><span class="offday-val">2 × 5 / side</span></div>
-      <div class="offday-row"><span class="offday-name">Dead Hang</span><span class="offday-val">2 × 30 sec</span></div>
-      <div class="offday-row"><span class="offday-name">Thoracic Rotations</span><span class="offday-val">2 × 10 / side</span></div>
-      <div class="offday-note">Low stakes · Maintain range of motion between sessions · Never to fatigue</div>
-    </div>
-
-    <div class="offday-block">
-      <div class="offday-type">Frequency</div>
-      <div class="offday-row"><span class="offday-name">Recovery Day</span><span class="offday-val">1–2× / week</span></div>
-      <div class="offday-row"><span class="offday-name">Conditioning Day</span><span class="offday-val">1× / week</span></div>
-      <div class="offday-row"><span class="offday-name">Full Rest</span><span class="offday-val">At least 1 day</span></div>
-      <div class="offday-note">Full rest means full rest. Mobility is not mandatory. Sleep is.</div>
-    </div>`;
-}
-
-function switchDay(id) {
-  activeDay = id;
-  render();
-  window.scrollTo({top:0, behavior:"smooth"});
-}
-
-function toggleSection(key) {
-  openSections[key] = !openSections[key];
-  render();
-}
-
-// ─── DRAWER ─────────────────────────────────────────────────────
-function openDrawer() {
-  document.getElementById("drawer").classList.add("open");
-  document.getElementById("drawerOverlay").classList.add("open");
-  document.body.style.overflow = "hidden";
-}
-function closeDrawer() {
-  document.getElementById("drawer").classList.remove("open");
-  document.getElementById("drawerOverlay").classList.remove("open");
-  document.body.style.overflow = "";
-}
-
-// ─── CALCULATOR ─────────────────────────────────────────────────
-function calculate() {
-  const w = parseFloat(document.getElementById("calcWeight").value);
-  const r = parseInt(document.getElementById("calcReps").value);
-  if (!w || !r || r < 1) return;
-
-  // Epley formula
-  const orm = r === 1 ? w : Math.round(w * (1 + r / 30) / 2.5) * 2.5;
-
-  const ranges = [
-    { label: "1RM (max)", pct: 100 },
-    { label: "3–5 reps (strength)", pct: 87 },
-    { label: "4–6 reps (strength+)", pct: 83 },
-    { label: "5–6 reps (hybrid)", pct: 80 },
-    { label: "6–8 reps (hypertrophy)", pct: 75 },
-    { label: "8–10 reps (hypertrophy)", pct: 70 },
-    { label: "10–12 reps (volume)", pct: 65 },
-    { label: "12–15 reps (endurance)", pct: 60 },
-  ];
-
-  document.getElementById("calcOrm").textContent = orm + " lb";
-  document.getElementById("calcRows").innerHTML = ranges.map(r => {
-    const val = Math.round(orm * r.pct / 100 / 2.5) * 2.5;
-    return `<div class="calc-result-row">
-      <span class="calc-result-label">${r.label}</span>
-      <span class="calc-result-pct">${r.pct}%</span>
-      <span class="calc-result-val">${val} lb</span>
-    </div>`;
-  }).join("");
-
-  document.getElementById("calcResults").classList.add("show");
-}
-
-document.getElementById("calcReps").addEventListener("keyup", e => { if(e.key==="Enter") calculate(); });
-document.getElementById("calcWeight").addEventListener("keyup", e => { if(e.key==="Enter") calculate(); });
-
-
-// ─── BASELINES ───────────────────────────────────────────────────
-const defaultBaselines = [
-  { id:"bench",   lift:"Bench Press",       orm:254, working:"210–215 lb", pctLow:0.827, pctHigh:0.846 },
-  { id:"ohp",     lift:"Overhead Press",    orm:163, working:"125–130 lb", pctLow:0.767, pctHigh:0.798 },
-  { id:"squat",   lift:"Back Squat",        orm:328, working:"275–285 lb", pctLow:0.838, pctHigh:0.869 },
-  { id:"rdl",     lift:"Romanian Deadlift", orm:254, working:"185–195 lb", pctLow:0.728, pctHigh:0.768 },
-  { id:"cgbench", lift:"Close-Grip Bench",  orm:200, working:"155–165 lb", pctLow:0.775, pctHigh:0.825 },
-];
-
-function loadBaselines() {
-  try {
-    const saved = localStorage.getItem('ar7_baselines');
-    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(defaultBaselines));
-  } catch(e) { return JSON.parse(JSON.stringify(defaultBaselines)); }
-}
-
-function saveBaselines(data) {
-  try { localStorage.setItem('ar7_baselines', JSON.stringify(data)); } catch(e) {}
-}
-
-function calcOrm(w, r) {
-  if (r === 1) return w;
-  return Math.round(w * (1 + r / 30) / 2.5) * 2.5;
-}
-
-function workingRange(orm, pctLow, pctHigh) {
-  const lo = Math.round(orm * pctLow / 2.5) * 2.5;
-  const hi = Math.round(orm * pctHigh / 2.5) * 2.5;
-  return lo === hi ? lo + ' lb' : lo + '–' + hi + ' lb';
-}
-
-function renderBaselines() {
-  const data = loadBaselines();
-  const el = document.getElementById('baselinesSection');
-  if (!el) return;
-  el.innerHTML = `
-    <div class="section-heading" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-      <span>Strength Baselines</span>
-      <span style="font-size:10px;color:#444;font-family:'Courier New',monospace;letter-spacing:0.1em">TAP TO UPDATE</span>
-    </div>
-    ${data.map(b => `
-      <div class="baseline-row">
-        <span class="baseline-lift">${b.lift}</span>
-        <span class="baseline-orm">1RM ~${b.orm} lb</span>
-        <span class="baseline-working">${workingRange(b.orm, b.pctLow, b.pctHigh)}</span>
-        <button class="baseline-edit-btn" onclick="openBaselineModal('${b.id}')">Edit</button>
-      </div>`).join('')}
-  `;
-}
-
-let editingBaselineId = null;
-
-function openBaselineModal(id) {
-  editingBaselineId = id;
-  const data = loadBaselines();
-  const b = data.find(x => x.id === id);
-  document.getElementById('modalLiftName').textContent = b.lift;
-  document.getElementById('modalWeight').value = '';
-  document.getElementById('modalReps').value = '';
-  document.getElementById('modalOrmPreview').textContent = 'Current 1RM: ~' + b.orm + ' lb · Working: ' + workingRange(b.orm, b.pctLow, b.pctHigh);
-  document.getElementById('modalOrmPreview').classList.remove('has-value');
-  document.getElementById('baselineModal').classList.add('open');
-  setTimeout(() => document.getElementById('modalWeight').focus(), 300);
-}
-
-function closeBaselineModal() {
-  document.getElementById('baselineModal').classList.remove('open');
-  editingBaselineId = null;
-}
-
-function updateModalPreview() {
-  const w = parseFloat(document.getElementById('modalWeight').value);
-  const r = parseInt(document.getElementById('modalReps').value);
-  const preview = document.getElementById('modalOrmPreview');
-  if (w && r && r >= 1) {
-    const data = loadBaselines();
-    const b = data.find(x => x.id === editingBaselineId);
-    const orm = calcOrm(w, r);
-    preview.textContent = 'New 1RM: ~' + orm + ' lb · Working: ' + workingRange(orm, b.pctLow, b.pctHigh);
-    preview.classList.add('has-value');
-  } else {
-    preview.classList.remove('has-value');
-    preview.textContent = 'Enter weight + reps to estimate 1RM';
-  }
-}
-
-function saveBaseline() {
-  const w = parseFloat(document.getElementById('modalWeight').value);
-  const r = parseInt(document.getElementById('modalReps').value);
-  if (!w || !r || r < 1) { closeBaselineModal(); return; }
-  const data = loadBaselines();
-  const b = data.find(x => x.id === editingBaselineId);
-  b.orm = calcOrm(w, r);
-  saveBaselines(data);
-  renderBaselines();
-  closeBaselineModal();
-}
-
-function resetBaseline() {
-  const def = defaultBaselines.find(x => x.id === editingBaselineId);
-  const data = loadBaselines();
-  const b = data.find(x => x.id === editingBaselineId);
-  b.orm = def.orm;
-  saveBaselines(data);
-  renderBaselines();
-  closeBaselineModal();
-}
-
-document.getElementById('baselineModal').addEventListener('click', e => {
-  if (e.target === document.getElementById('baselineModal')) closeBaselineModal();
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  ['modalWeight','modalReps'].forEach(id => {
-    document.getElementById(id).addEventListener('input', updateModalPreview);
-    document.getElementById(id).addEventListener('keyup', e => { if(e.key==='Enter') saveBaseline(); });
-  });
-});
-
-
-// ─── TIMER ──────────────────────────────────────────────────────
-let timerTotal = 90;
-let timerRemaining = 90;
-let timerInterval = null;
-let timerRunning = false;
-let panelOpen = false;
-
-const arc = document.getElementById("timerArc");
-const display = document.getElementById("timerDisplay");
-const label = document.getElementById("timerLabel");
-const bubble = document.getElementById("timerBubble");
-const CIRCUMFERENCE = 226;
-
-function updateTimerDisplay() {
-  const m = Math.floor(timerRemaining / 60);
-  const s = timerRemaining % 60;
-  display.textContent = `${m}:${s.toString().padStart(2,"0")}`;
-  const pct = timerTotal > 0 ? timerRemaining / timerTotal : 0;
-  arc.style.strokeDashoffset = CIRCUMFERENCE * (1 - pct);
-
-  if (timerRunning) {
-    const day = days.find(d => d.id === activeDay);
-    arc.style.stroke = day ? day.accent : "#888";
-    label.textContent = "RUNNING";
-    bubble.style.borderColor = day ? day.accent + "66" : "#444";
-  } else if (timerRemaining === 0) {
-    arc.style.stroke = "#2AE87B";
-    label.textContent = "DONE";
-    bubble.style.borderColor = "#2AE87B66";
-  } else {
-    arc.style.stroke = "#555";
-    label.textContent = timerRunning ? "RUNNING" : "TAP";
-    bubble.style.borderColor = "#2a2a2a";
-  }
-}
-
-function setTimer(seconds) {
-  clearInterval(timerInterval);
-  timerInterval = null;
-  timerRunning = false;
-  timerTotal = seconds;
-  timerRemaining = seconds;
-  document.querySelectorAll(".timer-preset").forEach(b => b.classList.remove("active"));
-  event.target.classList.add("active");
-  document.querySelector("[onclick='startPauseTimer()']").textContent = "Start";
-  updateTimerDisplay();
-}
-
-function startPauseTimer() {
-  if (timerRemaining === 0) { resetTimer(); return; }
-  if (timerRunning) {
-    clearInterval(timerInterval);
-    timerRunning = false;
-    label.textContent = "PAUSED";
-    this.textContent = "Resume";
-    document.querySelector("[onclick='startPauseTimer()']").textContent = "Resume";
-  } else {
-    timerRunning = true;
-    document.querySelector("[onclick='startPauseTimer()']").textContent = "Pause";
-    timerInterval = setInterval(() => {
-      timerRemaining--;
-      updateTimerDisplay();
-      if (timerRemaining <= 0) {
-        clearInterval(timerInterval);
-        timerRunning = false;
-        timerRemaining = 0;
-        document.querySelector("[onclick='startPauseTimer()']").textContent = "Start";
-        // Vibrate on finish
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-      }
-    }, 1000);
-  }
-  updateTimerDisplay();
-}
-
-function resetTimer() {
-  clearInterval(timerInterval);
-  timerRunning = false;
-  timerRemaining = timerTotal;
-  document.querySelector("[onclick='startPauseTimer()']").textContent = "Start";
-  updateTimerDisplay();
-}
-
-function toggleTimerPanel() {
-  panelOpen = !panelOpen;
-  document.getElementById("timerPanel").classList.toggle("show", panelOpen);
-}
-
-// Close timer panel when tapping elsewhere
-document.addEventListener("click", e => {
-  if (panelOpen && !e.target.closest("#timerPanel") && !e.target.closest("#timerBubble")) {
-    panelOpen = false;
-    document.getElementById("timerPanel").classList.remove("show");
-  }
-});
-
-// Drag timer bubble
-let drag = false, startX, startY, bx, by;
-bubble.addEventListener("pointerdown", e => {
-  drag = false;
-  startX = e.clientX; startY = e.clientY;
-  bx = bubble.getBoundingClientRect().left;
-  by = bubble.getBoundingClientRect().top;
-  bubble.setPointerCapture(e.pointerId);
-});
-bubble.addEventListener("pointermove", e => {
-  const dx = e.clientX - startX, dy = e.clientY - startY;
-  if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
-    drag = true;
-    const x = bx + dx;
-    const y = by + dy;
-    bubble.style.right = "auto";
-    bubble.style.bottom = "auto";
-    bubble.style.left = Math.max(0, Math.min(window.innerWidth - 72, x)) + "px";
-    bubble.style.top = Math.max(0, Math.min(window.innerHeight - 72, y)) + "px";
-  }
-});
-bubble.addEventListener("pointerup", e => {
-  if (drag) { e.stopPropagation(); e.preventDefault(); }
-});
-
-updateTimerDisplay();
-renderBaselines();
-render();
-</script>
-
-<!-- BASELINE EDIT MODAL -->
 <div class="modal-overlay" id="baselineModal">
   <div class="modal">
     <div class="modal-title">Update Baseline</div>
     <div class="modal-lift-name" id="modalLiftName"></div>
     <div class="calc-row">
-      <div>
-        <div class="calc-label">Weight lifted (lb)</div>
-        <input class="calc-input" type="number" id="modalWeight" placeholder="225" inputmode="decimal" />
-      </div>
-      <div>
-        <div class="calc-label">Reps completed</div>
-        <input class="calc-input" type="number" id="modalReps" placeholder="5" inputmode="numeric" min="1" max="30" />
-      </div>
+      <div><div class="calc-label">Weight lifted (lb)</div><input class="calc-input" type="number" id="modalWeight" placeholder="225" inputmode="decimal" /></div>
+      <div><div class="calc-label">Reps completed</div><input class="calc-input" type="number" id="modalReps" placeholder="5" inputmode="numeric" min="1" max="30" /></div>
     </div>
     <div class="modal-orm-preview" id="modalOrmPreview">Enter weight + reps to estimate 1RM</div>
     <div class="modal-actions">
-      <button class="modal-save" onclick="saveBaseline()">Save</button>
-      <button class="modal-cancel" onclick="closeBaselineModal()">Cancel</button>
-      <button class="modal-reset" onclick="resetBaseline()">Reset to default</button>
+      <button class="modal-save" id="modalSaveBtn">Save</button>
+      <button class="modal-cancel" id="modalCancelBtn">Cancel</button>
+      <button class="modal-reset" id="modalResetBtn">Reset to default</button>
     </div>
   </div>
 </div>
 
+<script>
+(function(){
+'use strict';
+
+const DAYS=[
+  {id:'push',day:'Thursday',label:'PUSH',sub:'Chest \xB7 Shoulders \xB7 Triceps',accent:'#E84B2A',duration:'~70 min',sections:[
+    {title:'Warm-Up',items:[{name:'Dip Position Leg Raises',sets:'2 \xD7 10',note:''},{name:'Bodyweight Dips',sets:'2 \xD7 10',note:'Then ramp sets into Bench Press'}]},
+    {title:'Primary Strength',items:[{name:'Barbell Bench Press',sets:'4 \xD7 4\u20136 @ 210\u2013215 lb',note:'2\u20133 min rest \xB7 Progress to 220 when hitting 6 across all 4 sets'},{name:'Standing Overhead Press',sets:'3 \xD7 5\u20136 @ 125\u2013130 lb',note:'2 min rest \xB7 Build from 125, earn 130'}]},
+    {title:'AR-7 Block \u2014 Chest Focus',ar7:true,items:[{name:'Action: Incline DB Press',sets:'6\u20138 reps',note:''},{name:'Reaction: DB Fly or Pec Deck',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest'}]},
+    {title:'Accessories',items:[{name:'Dumbbell Lateral Raises',sets:'3 \xD7 12\u201315',note:''}]},
+    {title:'Micro Arm Add-On \u2014 Triceps',items:[{name:'Rope Pushdowns or Overhead Cable Extensions',sets:'3 \xD7 10\u201312',note:'~60 sec rest'}]},
+  ]},
+  {id:'pull',day:'Friday',label:'PULL',sub:'Back \xB7 Rear Delts \xB7 Biceps',accent:'#2A7BE8',duration:'~75 min',sections:[
+    {title:'Warm-Up',items:[{name:'Dip Position Leg Raises',sets:'2 \xD7 10',note:'Then ramp sets into Pull-Ups'}]},
+    {title:'Primary Strength',items:[{name:'Weighted Pull-Ups or Lat Pulldown',sets:'4 \xD7 5\u20136',note:'2 min rest'},{name:'Barbell Row or Chest-Supported Row',sets:'3 \xD7 5\u20136',note:'2 min rest'}]},
+    {title:'AR-7 Block \u2014 Back Focus',ar7:true,items:[{name:'Action: One-Arm DB Row',sets:'6\u20138 reps / side',note:''},{name:'Reaction: Straight-Arm Pulldown or Band Pullover',sets:'12\u201315 reps',note:'7 rounds \xB7 minimal rest'}]},
+    {title:'Accessories',items:[{name:'Dirty 30s',sets:'3 \xD7 15',note:'Supinated \xD710 \u2192 Neutral \xD710 \u2192 Hip drive neutral \xD710'}]},
+    {title:'Micro Arm Add-On \u2014 Biceps',items:[{name:'EZ-Bar Curl or DB Curl',sets:'3 \xD7 10\u201312',note:'~60 sec rest'}]},
+    {title:'Golf Add-On',items:[{name:'Farmer Carries or Dead Hangs',sets:'2 \xD7 30\u201340m / 2 \xD7 20\u201330 sec',note:'~60 sec rest \xB7 Finish session here'}]},
+  ]},
+  {id:'legs',day:'Saturday',label:'LEGS',sub:'Quads \xB7 Hamstrings \xB7 Glutes \xB7 Core',accent:'#2AE87B',duration:'~80 min',sections:[
+    {title:'Warm-Up',items:[{name:'Feet Elevated Side Crunches',sets:'2 \xD7 5',note:'Neutral push-up \u2192 lateral flexion \u2192 back to neutral'},{name:'90/90 Hip Switches',sets:'2 \xD7 10',note:''},{name:'Hip CARs',sets:'2 \xD7 5 / side',note:'Then ramp sets into Squat'}]},
+    {title:'Primary Strength',items:[{name:'Back Squat or Safety Bar Squat',sets:'4 \xD7 3\u20135 @ 275\u2013285 lb',note:'2\u20133 min rest \xB7 295 is next target'},{name:'Romanian Deadlift',sets:'3 \xD7 5\u20136 @ 185\u2013195 lb',note:'2 min rest \xB7 Pattern over load'}]},
+    {title:'AR-7 Block \u2014 Quad Focus',ar7:true,items:[{name:'Action: Leg Press or Front Squat',sets:'6\u20138 reps',note:''},{name:'Reaction: Sissy Squats',sets:'10\u201312 reps',note:'7 rounds \xB7 15\u201320 sec rest'}]},
+    {title:'Core / Anti-Rotation',items:[{name:'Hanging Leg Raises or Ab Wheel',sets:'3 \xD7 10\u201312',note:'Alternate weekly with Pallof Press'},{name:'Pallof Press (alternate week)',sets:'3 \xD7 10\u201312 / side',note:'Light-moderate, slow and controlled'}]},
+    {title:'Golf Power Add-On',items:[{name:'Landmine Rotations',sets:'3 \xD7 8\u201310 / side',note:'~60 sec rest \xB7 Pattern training, not strength work'}]},
+  ]},
+  {id:'arms',day:'Sunday',label:'ARMS + LEGS',sub:'Biceps \xB7 Triceps \xB7 Unilateral Legs \xB7 Glutes',accent:'#E8C42A',duration:'~70 min',sections:[
+    {title:'Warm-Up',items:[{name:'Wrist Circles + Forearm Stretch',sets:'2 \xD7 10 each direction',note:''},{name:'Band Pull-Aparts',sets:'2 \xD7 15',note:'Shoulder health primer'},{name:'Cable Rope Pushdown (light)',sets:'1 \xD7 20',note:'Elbow warm-up'},{name:'EZ-Bar Curl (light)',sets:'1 \xD7 15',note:'Then ramp into Close-Grip Bench'}]},
+    {title:'Primary Strength \u2014 Triceps',items:[{name:'Close-Grip Bench Press',sets:'4 \xD7 5\u20136 @ 155\u2013165 lb',note:'2 min rest \xB7 Hit 6 across all 4 to earn next load'}]},
+    {title:'Primary Strength \u2014 Biceps',items:[{name:'EZ-Bar Curl or Barbell Curl',sets:'4 \xD7 6\u20138',note:'90 sec rest \xB7 3 sec eccentric, no body English'}]},
+    {title:'AR-7 Block \u2014 Triceps Focus',ar7:true,items:[{name:'Action: Overhead Cable Extension or Skull Crusher',sets:'8\u201310 reps',note:'Long head stretch position'},{name:'Reaction: Rope Pushdown',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest \xB7 Lateral head in shortened position'}]},
+    {title:'Superset \u2014 Biceps Hypertrophy',items:[{name:'A1: Incline DB Curl',sets:'3 \xD7 10\u201312',note:'Long head stretch'},{name:'A2: Hammer Curl',sets:'3 \xD7 10\u201312',note:'60 sec between supersets \xB7 Brachialis + grip transfer'}]},
+    {title:'Unilateral Legs \u2014 Quad',items:[{name:'Bulgarian Split Squat',sets:'3 \xD7 8\u201310 / leg @ 50\u201370 lb DBs',note:'90 sec rest \xB7 Submaximal \u2014 legs are pre-fatigued from Saturday'}]},
+    {title:'Unilateral Legs \u2014 Posterior Chain',items:[{name:'Single-Leg RDL',sets:'3 \xD7 8\u201310 / leg',note:'90 sec rest \xB7 Light-moderate \xB7 Pattern quality over load'}]},
+    {title:'Glute Isolation',items:[{name:'Hip Thrust or Cable Pull-Through',sets:'3 \xD7 12\u201315',note:'60 sec rest \xB7 Full hip extension, controlled squeeze'}]},
+    {title:'Calves + Golf Finish',items:[{name:'Standing Calf Raise',sets:'3 \xD7 15\u201320',note:'60 sec rest \xB7 Full ROM, slow eccentric'},{name:'Dead Hang',sets:'2 \xD7 20\u201330 sec',note:'Finish session here \xB7 Decompression + grip endurance'}]},
+  ]},
+  {id:'off',day:'Mon\u2013Wed',label:'OFF DAYS',sub:'Recovery \xB7 Conditioning \xB7 Mobility',accent:'#9B8EE8',duration:'Optional',isOff:true},
+];
+
+const DEFAULT_BASELINES=[
+  {id:'bench',  lift:'Bench Press',      orm:254,pctLow:0.827,pctHigh:0.846},
+  {id:'ohp',    lift:'Overhead Press',   orm:163,pctLow:0.767,pctHigh:0.798},
+  {id:'squat',  lift:'Back Squat',       orm:328,pctLow:0.838,pctHigh:0.869},
+  {id:'rdl',    lift:'Romanian Deadlift',orm:254,pctLow:0.728,pctHigh:0.768},
+  {id:'cgbench',lift:'Close-Grip Bench', orm:200,pctLow:0.775,pctHigh:0.825},
+];
+
+let activeDay='push';
+const openSections={};
+let editingBaselineId=null;
+
+function calcOrm(w,r){return r===1?w:Math.round(w*(1+r/30)/2.5)*2.5;}
+function workingRange(orm,lo,hi){const a=Math.round(orm*lo/2.5)*2.5,b=Math.round(orm*hi/2.5)*2.5;return a===b?a+' lb':a+'\u2013'+b+' lb';}
+
+function loadBaselines(){try{const s=localStorage.getItem('ar7_baselines');return s?JSON.parse(s):JSON.parse(JSON.stringify(DEFAULT_BASELINES));}catch(e){return JSON.parse(JSON.stringify(DEFAULT_BASELINES));}}
+function saveBaselines(d){try{localStorage.setItem('ar7_baselines',JSON.stringify(d));}catch(e){}}
+
+function renderBaselines(){
+  const el=document.getElementById('baselinesSection');if(!el)return;
+  const data=loadBaselines();
+  el.innerHTML='<div class="section-heading" style="display:flex;justify-content:space-between;align-items:center"><span>Strength Baselines</span><span style="font-size:9px;color:var(--text-ghost);font-family:var(--font-mono);letter-spacing:0.1em">TAP TO UPDATE</span></div>'+
+  data.map(b=>'<div class="baseline-row"><span class="baseline-lift">'+b.lift+'</span><span class="baseline-orm">1RM ~'+b.orm+' lb</span><span class="baseline-working">'+workingRange(b.orm,b.pctLow,b.pctHigh)+'</span><button class="baseline-edit-btn" data-id="'+b.id+'" aria-label="Edit '+b.lift+'">Edit</button></div>').join('');
+  el.querySelectorAll('.baseline-edit-btn').forEach(btn=>btn.addEventListener('click',()=>openBaselineModal(btn.dataset.id)));
+}
+
+function openBaselineModal(id){
+  editingBaselineId=id;
+  const b=loadBaselines().find(x=>x.id===id);
+  document.getElementById('modalLiftName').textContent=b.lift;
+  document.getElementById('modalWeight').value='';
+  document.getElementById('modalReps').value='';
+  const p=document.getElementById('modalOrmPreview');
+  p.textContent='Current 1RM: ~'+b.orm+' lb \xB7 Working: '+workingRange(b.orm,b.pctLow,b.pctHigh);
+  p.classList.remove('has-value');
+  document.getElementById('baselineModal').classList.add('open');
+  setTimeout(()=>document.getElementById('modalWeight').focus(),300);
+}
+function closeBaselineModal(){document.getElementById('baselineModal').classList.remove('open');editingBaselineId=null;}
+function updateModalPreview(){
+  const w=parseFloat(document.getElementById('modalWeight').value),r=parseInt(document.getElementById('modalReps').value);
+  const p=document.getElementById('modalOrmPreview');
+  const b=loadBaselines().find(x=>x.id===editingBaselineId);
+  if(!b)return;
+  if(w&&r&&r>=1){p.textContent='New 1RM: ~'+calcOrm(w,r)+' lb \xB7 Working: '+workingRange(calcOrm(w,r),b.pctLow,b.pctHigh);p.classList.add('has-value');}
+  else{p.textContent='Enter weight + reps to estimate 1RM';p.classList.remove('has-value');}
+}
+function saveBaseline(){
+  const w=parseFloat(document.getElementById('modalWeight').value),r=parseInt(document.getElementById('modalReps').value);
+  if(!w||!r||r<1){closeBaselineModal();return;}
+  const data=loadBaselines(),b=data.find(x=>x.id===editingBaselineId);
+  if(b){b.orm=calcOrm(w,r);saveBaselines(data);}
+  renderBaselines();closeBaselineModal();
+}
+function resetBaseline(){
+  const def=DEFAULT_BASELINES.find(x=>x.id===editingBaselineId),data=loadBaselines(),b=data.find(x=>x.id===editingBaselineId);
+  if(b&&def){b.orm=def.orm;saveBaselines(data);}
+  renderBaselines();closeBaselineModal();
+}
+
+function render(){
+  const day=DAYS.find(d=>d.id===activeDay);
+  document.getElementById('tabs').innerHTML=DAYS.map(d=>'<button class="tab" data-day-id="'+d.id+'" style="border-bottom-color:'+(activeDay===d.id?d.accent:'transparent')+';color:'+(activeDay===d.id?d.accent:'var(--text-muted)')+'"><span class="tab-day">'+d.day+'</span>'+d.label+'</button>').join('');
+  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchDay(b.dataset.dayId)));
+  document.getElementById('bottomSection').style.display=day.isOff?'none':'block';
+  if(day.isOff){renderOffDays(day);return;}
+  const secs=day.sections.map((s,si)=>{
+    const key=day.id+'-'+si;
+    if(!(key in openSections))openSections[key]=true;
+    const open=openSections[key];
+    const items=s.items.map(item=>'<div class="item"><div><div class="item-name">'+item.name+'</div>'+(item.note?'<div class="item-note">'+item.note+'</div>':'')+'</div><div class="item-sets" style="color:'+day.accent+'">'+item.sets+'</div></div>').join('');
+    return '<div class="section"><button class="section-toggle" data-key="'+key+'" style="border-top-color:'+(s.ar7?day.accent+'44':'var(--border-mid)')+';border-left-color:'+(s.ar7?day.accent:'transparent')+'"><span class="section-label" style="color:'+(s.ar7?day.accent:'var(--text-muted)')+'>'+(s.ar7?'<span style="margin-right:8px;opacity:0.6">\u25C6</span>':'')+s.title+'</span><span class="section-caret'+(open?' open':'')+'">&#x25BC;</span></button><div class="section-body'+(open?' open':'')+'"><div class="section-items">'+items+'</div></div></div>';
+  }).join('');
+  document.getElementById('content').innerHTML='<div class="day-header"><div><div class="day-title" style="color:'+day.accent+'">'+day.label+'</div><div class="day-sub">'+day.sub+'</div></div><div class="day-duration">'+day.duration+'</div></div>'+secs;
+  document.querySelectorAll('.section-toggle').forEach(btn=>btn.addEventListener('click',()=>toggleSection(btn.dataset.key)));
+}
+
+function renderOffDays(day){
+  document.getElementById('content').innerHTML='<div class="day-header"><div><div class="day-title" style="color:'+day.accent+'">'+day.label+'</div><div class="day-sub">'+day.sub+'</div></div><div class="day-duration">'+day.duration+'</div></div>'+
+  '<div class="offday-block"><div class="offday-type">Jump Rope \u2014 Recovery Day</div><div class="offday-row"><span class="offday-name">Steady State</span><span class="offday-val">10\u201315 min</span></div><div class="offday-note">Easy pace \xB7 Nasal breathing only \xB7 Not a conditioning session</div></div>'+
+  '<div class="offday-block"><div class="offday-type">Jump Rope \u2014 Conditioning Day</div><div class="offday-row"><span class="offday-name">Work Interval</span><span class="offday-val">1 min fast</span></div><div class="offday-row"><span class="offday-name">Rest Interval</span><span class="offday-val">1 min easy</span></div><div class="offday-row"><span class="offday-name">Rounds</span><span class="offday-val">5</span></div><div class="offday-note">Total ~10 min \xB7 Push pace on work intervals \xB7 Walk or slow spin on rest</div></div>'+
+  '<div class="offday-block"><div class="offday-type">Mobility \u2014 Optional</div><div class="offday-row"><span class="offday-name">90/90 Hip Switches</span><span class="offday-val">2 \xD7 10</span></div><div class="offday-row"><span class="offday-name">Hip CARs</span><span class="offday-val">2 \xD7 5 / side</span></div><div class="offday-row"><span class="offday-name">Dead Hang</span><span class="offday-val">2 \xD7 30 sec</span></div><div class="offday-row"><span class="offday-name">Thoracic Rotations</span><span class="offday-val">2 \xD7 10 / side</span></div><div class="offday-note">Low stakes \xB7 Maintain range of motion between sessions \xB7 Never to fatigue</div></div>'+
+  '<div class="offday-block"><div class="offday-type">Frequency</div><div class="offday-row"><span class="offday-name">Recovery Day</span><span class="offday-val">1\u20132\xD7 / week</span></div><div class="offday-row"><span class="offday-name">Conditioning Day</span><span class="offday-val">1\xD7 / week</span></div><div class="offday-row"><span class="offday-name">Full Rest</span><span class="offday-val">At least 1 day</span></div><div class="offday-note">Full rest means full rest. Mobility is not mandatory. Sleep is.</div></div>';
+}
+
+function switchDay(id){activeDay=id;render();window.scrollTo({top:0,behavior:'smooth'});}
+function toggleSection(key){openSections[key]=!openSections[key];render();}
+
+function openDrawer(){document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');document.body.style.overflow='hidden';}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open');document.body.style.overflow='';}
+
+function calculate(){
+  const w=parseFloat(document.getElementById('calcWeight').value),r=parseInt(document.getElementById('calcReps').value);
+  if(!w||!r||r<1)return;
+  const orm=calcOrm(w,r);
+  const ranges=[{label:'1RM (max)',pct:100},{label:'3\u20135 reps (strength)',pct:87},{label:'4\u20136 reps (strength+)',pct:83},{label:'5\u20136 reps (hybrid)',pct:80},{label:'6\u20138 reps (hypertrophy)',pct:75},{label:'8\u201310 reps (hypertrophy)',pct:70},{label:'10\u201312 reps (volume)',pct:65},{label:'12\u201315 reps (endurance)',pct:60}];
+  document.getElementById('calcOrm').textContent=orm+' lb';
+  document.getElementById('calcRows').innerHTML=ranges.map(range=>{const v=Math.round(orm*range.pct/100/2.5)*2.5;return'<div class="calc-result-row"><span class="calc-result-label">'+range.label+'</span><span class="calc-result-pct">'+range.pct+'%</span><span class="calc-result-val">'+v+' lb</span></div>';}).join('');
+  document.getElementById('calcResults').classList.add('show');
+}
+
+const CIRC=226;
+let timerTotal=90,timerRemaining=90,timerInterval=null,timerRunning=false,timerPanelOpen=false;
+const arcEl=document.getElementById('timerArc'),displayEl=document.getElementById('timerDisplay'),statusEl=document.getElementById('timerStatus'),bubbleEl=document.getElementById('timerBubble'),startBtn=document.getElementById('timerStartBtn');
+
+function updateTimerDisplay(){
+  const m=Math.floor(timerRemaining/60),s=timerRemaining%60;
+  displayEl.textContent=(timerRemaining===timerTotal&&!timerRunning)?'REST':m+':'+(s<10?'0':'')+s;
+  const pct=timerTotal>0?timerRemaining/timerTotal:0;
+  arcEl.style.strokeDashoffset=CIRC*(1-pct);
+  const day=DAYS.find(d=>d.id===activeDay),accent=day?day.accent:'#888';
+  if(timerRunning){arcEl.style.stroke=accent;bubbleEl.style.borderColor=accent+'66';statusEl.textContent='REST';}
+  else if(timerRemaining===0){arcEl.style.stroke='#2AE87B';bubbleEl.style.borderColor='#2AE87B66';statusEl.textContent='DONE';}
+  else{arcEl.style.stroke='#555';bubbleEl.style.borderColor='var(--border-vis)';statusEl.textContent='TAP';}
+}
+
+function setTimer(seconds,el){clearInterval(timerInterval);timerRunning=false;timerTotal=seconds;timerRemaining=seconds;document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));if(el)el.classList.add('active');startBtn.textContent='Start';updateTimerDisplay();}
+function startPauseTimer(){
+  if(timerRemaining===0){resetTimer();return;}
+  if(timerRunning){clearInterval(timerInterval);timerRunning=false;startBtn.textContent='Resume';statusEl.textContent='PAUSED';}
+  else{timerRunning=true;startBtn.textContent='Pause';timerInterval=setInterval(()=>{timerRemaining--;updateTimerDisplay();if(timerRemaining<=0){clearInterval(timerInterval);timerRunning=false;timerRemaining=0;startBtn.textContent='Start';if(navigator.vibrate)navigator.vibrate([200,100,200]);}},1000);}
+  updateTimerDisplay();
+}
+function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerRemaining=timerTotal;startBtn.textContent='Start';updateTimerDisplay();}
+function toggleTimerPanel(){timerPanelOpen=!timerPanelOpen;document.getElementById('timerPanel').classList.toggle('show',timerPanelOpen);}
+
+let isDragging=false,dragStartX,dragStartY,bStartX,bStartY;
+bubbleEl.addEventListener('pointerdown',e=>{isDragging=false;dragStartX=e.clientX;dragStartY=e.clientY;const r=bubbleEl.getBoundingClientRect();bStartX=r.left;bStartY=r.top;bubbleEl.setPointerCapture(e.pointerId);});
+bubbleEl.addEventListener('pointermove',e=>{const dx=e.clientX-dragStartX,dy=e.clientY-dragStartY;if(Math.abs(dx)>5||Math.abs(dy)>5){isDragging=true;bubbleEl.style.right='auto';bubbleEl.style.bottom='auto';bubbleEl.style.left=Math.max(0,Math.min(window.innerWidth-72,bStartX+dx))+'px';bubbleEl.style.top=Math.max(0,Math.min(window.innerHeight-72,bStartY+dy))+'px';}});
+bubbleEl.addEventListener('pointerup',e=>{if(!isDragging)toggleTimerPanel();else{e.stopPropagation();e.preventDefault();}});
+
+document.getElementById('hamburgerBtn').addEventListener('click',openDrawer);
+document.getElementById('drawerCloseBtn').addEventListener('click',closeDrawer);
+document.getElementById('drawerOverlay').addEventListener('click',closeDrawer);
+document.getElementById('calcBtn').addEventListener('click',calculate);
+document.getElementById('calcWeight').addEventListener('keyup',e=>{if(e.key==='Enter')calculate();});
+document.getElementById('calcReps').addEventListener('keyup',e=>{if(e.key==='Enter')calculate();});
+document.getElementById('timerStartBtn').addEventListener('click',startPauseTimer);
+document.getElementById('timerResetBtn').addEventListener('click',resetTimer);
+document.getElementById('timerPresets').addEventListener('click',e=>{const p=e.target.closest('.timer-preset');if(p)setTimer(parseInt(p.dataset.seconds),p);});
+document.getElementById('modalSaveBtn').addEventListener('click',saveBaseline);
+document.getElementById('modalCancelBtn').addEventListener('click',closeBaselineModal);
+document.getElementById('modalResetBtn').addEventListener('click',resetBaseline);
+document.getElementById('baselineModal').addEventListener('click',e=>{if(e.target===document.getElementById('baselineModal'))closeBaselineModal();});
+document.getElementById('modalWeight').addEventListener('input',updateModalPreview);
+document.getElementById('modalReps').addEventListener('input',updateModalPreview);
+document.getElementById('modalWeight').addEventListener('keyup',e=>{if(e.key==='Enter')saveBaseline();});
+document.getElementById('modalReps').addEventListener('keyup',e=>{if(e.key==='Enter')saveBaseline();});
+document.addEventListener('click',e=>{if(timerPanelOpen&&!e.target.closest('#timerPanel')&&!e.target.closest('#timerBubble')){timerPanelOpen=false;document.getElementById('timerPanel').classList.remove('show');}});
+
+updateTimerDisplay();renderBaselines();render();
+})();
+</script>
 </body>
 </html>
