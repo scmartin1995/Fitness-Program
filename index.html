@@ -94,7 +94,7 @@
     .section{margin-bottom:2px;}
     .section-toggle{width:100%;background:rgba(255,255,255,0.03);border:none;border-top:1px solid var(--border-mid);border-left:3px solid transparent;padding:13px 0 13px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;text-align:left;transition:background var(--t-fast);min-height:44px;}
     .section-toggle:hover{background:rgba(255,255,255,0.02);}
-    .section-label{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);font-weight:500;}
+    .section-label{font-size:13px;letter-spacing:0.08em;text-transform:uppercase;font-family:var(--font-mono);font-weight:500;flex:1;text-align:left;display:flex;align-items:center;gap:8px;}
     .section-caret{font-size:11px;padding-right:6px;transition:transform var(--t-fast);}
     .section-caret.open{transform:rotate(180deg);}
     .section-body{overflow:hidden;max-height:0;opacity:0;transition:max-height 0.35s ease,opacity 0.25s ease;}
@@ -393,7 +393,7 @@ function render(){
     if(!(key in openSections))openSections[key]=true;
     const open=openSections[key];
     const items=s.items.map(item=>'<div class="item"><div><div class="item-name">'+item.name+'</div>'+(item.note?'<div class="item-note">'+item.note+'</div>':'')+'</div><div class="item-sets" style="color:'+day.accent+'">'+item.sets+'</div></div>').join('');
-    return '<div class="section"><button class="section-toggle" data-key="'+key+'" style="border-top-color:'+(s.ar7?day.accent+'44':'var(--border-mid)')+';border-left-color:'+(s.ar7?day.accent:'transparent')+'"><span class="section-label" style="color:'+(day.accent)+';opacity:'+(s.ar7?'1':'0.9')+'>'+(s.ar7?'<span style="margin-right:8px;opacity:0.6">\u25C6</span>':'')+s.title+'</span><span class="section-caret'+(open?' open':'')+'" style="color:'+day.accent+'">&#x25BC;</span></button><div class="section-body'+(open?' open':'')+'"><div class="section-items">'+items+'</div></div></div>';
+    return '<div class="section"><button class="section-toggle" data-key="'+key+'" style="border-top-color:'+(s.ar7?day.accent+'44':'var(--border-mid)')+';border-left-color:'+(s.ar7?day.accent:'transparent')+'"><span class="section-label" style="color:'+(day.accent)+';opacity:'+(s.ar7?'1':'0.9')+'>'+(s.ar7?'<span style="opacity:0.8">\u25C6</span>':'')+s.title+'</span><span class="section-caret'+(open?' open':'')+'" style="color:'+day.accent+'">&#x25BC;</span></button><div class="section-body'+(open?' open':'')+'"><div class="section-items">'+items+'</div></div></div>';
   }).join('');
   document.getElementById('content').innerHTML='<div class="day-header"><div><div class="day-title" style="color:'+day.accent+'">'+day.label+'</div><div class="day-sub">'+day.sub+'</div></div><div class="day-duration">'+day.duration+'</div></div>'+secs;
   document.querySelectorAll('.section-toggle').forEach(btn=>btn.addEventListener('click',()=>toggleSection(btn.dataset.key)));
