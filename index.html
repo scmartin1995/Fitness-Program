@@ -255,6 +255,70 @@
     }
     .timer-ctrl-btn:hover { background: #222; color: #e8e8e0; }
 
+
+    /* EDITABLE BASELINES */
+    .baseline-row {
+      display: grid; grid-template-columns: 1fr auto auto auto; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid #141414; align-items: center;
+    }
+    .baseline-lift { font-size: 14px; }
+    .baseline-orm { font-size: 12px; color: #555; font-family: 'Courier New', monospace; }
+    .baseline-working { font-size: 12px; color: #e8e8e0; font-family: 'Courier New', monospace; }
+    .baseline-edit-btn {
+      background: none; border: 1px solid #2a2a2a; color: #444; cursor: pointer;
+      font-family: 'Courier New', monospace; font-size: 10px; padding: 4px 8px;
+      border-radius: 3px; letter-spacing: 0.05em; transition: all 0.15s; white-space: nowrap;
+    }
+    .baseline-edit-btn:hover { border-color: #555; color: #aaa; }
+
+    /* BASELINE MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #111; border: 1px solid #2a2a2a; border-radius: 8px;
+      padding: 28px 24px; width: 100%; max-width: 340px;
+      transform: translateY(16px); transition: transform 0.2s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal-title {
+      font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: #555; font-family: 'Courier New', monospace; margin-bottom: 6px;
+    }
+    .modal-lift-name {
+      font-size: 20px; font-weight: 400; margin-bottom: 20px; color: #e8e8e0;
+    }
+    .modal-orm-preview {
+      font-size: 12px; color: #666; font-family: 'Courier New', monospace;
+      margin-bottom: 20px; min-height: 18px; transition: color 0.2s;
+    }
+    .modal-orm-preview.has-value { color: #aaa; }
+    .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+    .modal-save {
+      background: #1e1e1e; border: 1px solid #3a3a3a; color: #e8e8e0;
+      font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 12px; cursor: pointer; border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .modal-save:hover { background: #2a2a2a; border-color: #555; }
+    .modal-cancel {
+      background: none; border: 1px solid #222; color: #555;
+      font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 12px; cursor: pointer; border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .modal-cancel:hover { border-color: #333; color: #777; }
+    .modal-reset {
+      grid-column: 1 / -1; background: none; border: none; color: #333;
+      font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 8px; cursor: pointer; text-align: center;
+      transition: color 0.15s; margin-top: 4px;
+    }
+    .modal-reset:hover { color: #666; }
+
     @media (max-width: 480px) {
       .two-col { grid-template-columns: 1fr; }
       .baseline-row { grid-template-columns: 1fr auto; }
@@ -348,14 +412,7 @@
 
 <div class="bottom" id="bottomSection">
   <div class="bottom-inner">
-    <div class="baselines">
-      <div class="section-heading">Strength Baselines</div>
-      <div class="baseline-row"><span class="baseline-lift">Bench Press</span><span class="baseline-orm">1RM ~254 lb</span><span class="baseline-working">210–215 lb</span></div>
-      <div class="baseline-row"><span class="baseline-lift">Overhead Press</span><span class="baseline-orm">1RM ~163 lb</span><span class="baseline-working">125–130 lb</span></div>
-      <div class="baseline-row"><span class="baseline-lift">Back Squat</span><span class="baseline-orm">1RM ~328 lb</span><span class="baseline-working">275–285 lb</span></div>
-      <div class="baseline-row"><span class="baseline-lift">Romanian Deadlift</span><span class="baseline-orm">1RM ~254 lb</span><span class="baseline-working">185–195 lb</span></div>
-      <div class="baseline-row"><span class="baseline-lift">Close-Grip Bench</span><span class="baseline-orm">1RM ~200 lb est.</span><span class="baseline-working">155–165 lb</span></div>
-    </div>
+    <div class="baselines" id="baselinesSection"></div>
   </div>
 </div>
 
@@ -669,6 +726,127 @@ function calculate() {
 document.getElementById("calcReps").addEventListener("keyup", e => { if(e.key==="Enter") calculate(); });
 document.getElementById("calcWeight").addEventListener("keyup", e => { if(e.key==="Enter") calculate(); });
 
+
+// ─── BASELINES ───────────────────────────────────────────────────
+const defaultBaselines = [
+  { id:"bench",   lift:"Bench Press",       orm:254, working:"210–215 lb", pctLow:0.827, pctHigh:0.846 },
+  { id:"ohp",     lift:"Overhead Press",    orm:163, working:"125–130 lb", pctLow:0.767, pctHigh:0.798 },
+  { id:"squat",   lift:"Back Squat",        orm:328, working:"275–285 lb", pctLow:0.838, pctHigh:0.869 },
+  { id:"rdl",     lift:"Romanian Deadlift", orm:254, working:"185–195 lb", pctLow:0.728, pctHigh:0.768 },
+  { id:"cgbench", lift:"Close-Grip Bench",  orm:200, working:"155–165 lb", pctLow:0.775, pctHigh:0.825 },
+];
+
+function loadBaselines() {
+  try {
+    const saved = localStorage.getItem('ar7_baselines');
+    return saved ? JSON.parse(saved) : JSON.parse(JSON.stringify(defaultBaselines));
+  } catch(e) { return JSON.parse(JSON.stringify(defaultBaselines)); }
+}
+
+function saveBaselines(data) {
+  try { localStorage.setItem('ar7_baselines', JSON.stringify(data)); } catch(e) {}
+}
+
+function calcOrm(w, r) {
+  if (r === 1) return w;
+  return Math.round(w * (1 + r / 30) / 2.5) * 2.5;
+}
+
+function workingRange(orm, pctLow, pctHigh) {
+  const lo = Math.round(orm * pctLow / 2.5) * 2.5;
+  const hi = Math.round(orm * pctHigh / 2.5) * 2.5;
+  return lo === hi ? lo + ' lb' : lo + '–' + hi + ' lb';
+}
+
+function renderBaselines() {
+  const data = loadBaselines();
+  const el = document.getElementById('baselinesSection');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="section-heading" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <span>Strength Baselines</span>
+      <span style="font-size:10px;color:#444;font-family:'Courier New',monospace;letter-spacing:0.1em">TAP TO UPDATE</span>
+    </div>
+    ${data.map(b => `
+      <div class="baseline-row">
+        <span class="baseline-lift">${b.lift}</span>
+        <span class="baseline-orm">1RM ~${b.orm} lb</span>
+        <span class="baseline-working">${workingRange(b.orm, b.pctLow, b.pctHigh)}</span>
+        <button class="baseline-edit-btn" onclick="openBaselineModal('${b.id}')">Edit</button>
+      </div>`).join('')}
+  `;
+}
+
+let editingBaselineId = null;
+
+function openBaselineModal(id) {
+  editingBaselineId = id;
+  const data = loadBaselines();
+  const b = data.find(x => x.id === id);
+  document.getElementById('modalLiftName').textContent = b.lift;
+  document.getElementById('modalWeight').value = '';
+  document.getElementById('modalReps').value = '';
+  document.getElementById('modalOrmPreview').textContent = 'Current 1RM: ~' + b.orm + ' lb · Working: ' + workingRange(b.orm, b.pctLow, b.pctHigh);
+  document.getElementById('modalOrmPreview').classList.remove('has-value');
+  document.getElementById('baselineModal').classList.add('open');
+  setTimeout(() => document.getElementById('modalWeight').focus(), 300);
+}
+
+function closeBaselineModal() {
+  document.getElementById('baselineModal').classList.remove('open');
+  editingBaselineId = null;
+}
+
+function updateModalPreview() {
+  const w = parseFloat(document.getElementById('modalWeight').value);
+  const r = parseInt(document.getElementById('modalReps').value);
+  const preview = document.getElementById('modalOrmPreview');
+  if (w && r && r >= 1) {
+    const data = loadBaselines();
+    const b = data.find(x => x.id === editingBaselineId);
+    const orm = calcOrm(w, r);
+    preview.textContent = 'New 1RM: ~' + orm + ' lb · Working: ' + workingRange(orm, b.pctLow, b.pctHigh);
+    preview.classList.add('has-value');
+  } else {
+    preview.classList.remove('has-value');
+    preview.textContent = 'Enter weight + reps to estimate 1RM';
+  }
+}
+
+function saveBaseline() {
+  const w = parseFloat(document.getElementById('modalWeight').value);
+  const r = parseInt(document.getElementById('modalReps').value);
+  if (!w || !r || r < 1) { closeBaselineModal(); return; }
+  const data = loadBaselines();
+  const b = data.find(x => x.id === editingBaselineId);
+  b.orm = calcOrm(w, r);
+  saveBaselines(data);
+  renderBaselines();
+  closeBaselineModal();
+}
+
+function resetBaseline() {
+  const def = defaultBaselines.find(x => x.id === editingBaselineId);
+  const data = loadBaselines();
+  const b = data.find(x => x.id === editingBaselineId);
+  b.orm = def.orm;
+  saveBaselines(data);
+  renderBaselines();
+  closeBaselineModal();
+}
+
+document.getElementById('baselineModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('baselineModal')) closeBaselineModal();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['modalWeight','modalReps'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateModalPreview);
+    document.getElementById(id).addEventListener('keyup', e => { if(e.key==='Enter') saveBaseline(); });
+  });
+});
+
+
 // ─── TIMER ──────────────────────────────────────────────────────
 let timerTotal = 90;
 let timerRemaining = 90;
@@ -791,7 +969,33 @@ bubble.addEventListener("pointerup", e => {
 });
 
 updateTimerDisplay();
+renderBaselines();
 render();
 </script>
+
+<!-- BASELINE EDIT MODAL -->
+<div class="modal-overlay" id="baselineModal">
+  <div class="modal">
+    <div class="modal-title">Update Baseline</div>
+    <div class="modal-lift-name" id="modalLiftName"></div>
+    <div class="calc-row">
+      <div>
+        <div class="calc-label">Weight lifted (lb)</div>
+        <input class="calc-input" type="number" id="modalWeight" placeholder="225" inputmode="decimal" />
+      </div>
+      <div>
+        <div class="calc-label">Reps completed</div>
+        <input class="calc-input" type="number" id="modalReps" placeholder="5" inputmode="numeric" min="1" max="30" />
+      </div>
+    </div>
+    <div class="modal-orm-preview" id="modalOrmPreview">Enter weight + reps to estimate 1RM</div>
+    <div class="modal-actions">
+      <button class="modal-save" onclick="saveBaseline()">Save</button>
+      <button class="modal-cancel" onclick="closeBaselineModal()">Cancel</button>
+      <button class="modal-reset" onclick="resetBaseline()">Reset to default</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
