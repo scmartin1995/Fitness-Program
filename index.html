@@ -141,16 +141,16 @@
     .modal-save:hover{background:#252525;border-color:var(--text-muted);}
     .modal-cancel{background:none;border:1px solid var(--border-soft);color:var(--text-muted);font-family:var(--font-mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;padding:13px;cursor:pointer;border-radius:4px;transition:border-color var(--t-fast),color var(--t-fast);}
     .modal-cancel:hover{border-color:#333;color:var(--text-dim);}
-    .modal-reset{grid-column:1/-1;background:none;border:none;color:var(--text-faint);font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:10px;cursor:pointer;text-align:center;transition:color var(--t-fast);}
-    .modal-reset:hover{color:var(--text-dim);}
+    .modal-reset{grid-column:1/-1;background:none;border:none;color:var(--text-muted);font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:10px;cursor:pointer;text-align:center;transition:color var(--t-fast);}
+    .modal-reset:hover{color:var(--text-secondary);}
 
     /* TIMER */
-    .timer-bubble{position:fixed;bottom:calc(32px + var(--safe-bottom));right:24px;width:72px;height:72px;border-radius:50%;background:var(--bg-input);border:2px solid var(--border-vis);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:50;user-select:none;box-shadow:0 4px 24px rgba(0,0,0,0.6);transition:border-color var(--t-mid),transform 0.1s;touch-action:none;}
+    .timer-bubble{position:fixed;bottom:calc(32px + var(--safe-bottom));right:24px;width:86px;height:86px;border-radius:50%;background:var(--bg-input);border:2px solid var(--border-vis);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:50;user-select:none;box-shadow:0 4px 24px rgba(0,0,0,0.6);transition:border-color var(--t-mid),transform 0.1s;}
     .timer-bubble:active{transform:scale(0.95);}
-    .timer-time{font-size:14px;font-family:var(--font-mono);color:var(--text-primary);line-height:1;font-weight:300;}
-    .timer-status{font-size:8px;font-family:var(--font-mono);color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
+    .timer-time{font-size:17px;font-family:var(--font-mono);color:var(--text-primary);line-height:1;font-weight:300;}
+    .timer-status{font-size:9px;font-family:var(--font-mono);color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
     .timer-ring{position:absolute;inset:-3px;border-radius:50%;pointer-events:none;}
-    .timer-panel{position:fixed;bottom:calc(116px + var(--safe-bottom));right:24px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:8px;padding:16px;z-index:50;min-width:188px;box-shadow:0 8px 32px rgba(0,0,0,0.7);opacity:0;pointer-events:none;transform:translateY(8px) scale(0.97);transition:opacity var(--t-fast),transform var(--t-fast);transform-origin:bottom right;}
+    .timer-panel{position:fixed;bottom:calc(130px + var(--safe-bottom));right:24px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:8px;padding:16px;z-index:50;min-width:188px;box-shadow:0 8px 32px rgba(0,0,0,0.7);opacity:0;pointer-events:none;transform:translateY(8px) scale(0.97);transition:opacity var(--t-fast),transform var(--t-fast);transform-origin:bottom right;}
     .timer-panel.show{opacity:1;pointer-events:all;transform:translateY(0) scale(1);}
     .timer-panel-title{font-size:9px;letter-spacing:0.25em;color:var(--text-muted);font-family:var(--font-mono);text-transform:uppercase;margin-bottom:12px;}
     .timer-presets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
@@ -168,7 +168,13 @@
     @media(max-width:480px){
       .baseline-row{grid-template-columns:1fr auto auto;}
       .baseline-orm{display:none;}
+      .timer-bubble{width:70px;height:70px;bottom:calc(24px + var(--safe-bottom));right:16px;}
+      .timer-bubble .timer-time{font-size:13px;}
+      .timer-bubble .timer-status{font-size:8px;}
+      .timer-panel{right:16px;bottom:calc(106px + var(--safe-bottom));}
     }
+    .timer-bubble.scroll-fade{opacity:0.35;transition:opacity 0.3s ease,border-color var(--t-mid),transform 0.1s;}
+    .timer-bubble.scroll-fade:hover,.timer-bubble.scroll-fade:active{opacity:1;}
   </style>
 </head>
 <body>
@@ -256,11 +262,11 @@
 </div>
 
 <div class="timer-bubble" id="timerBubble">
-  <svg class="timer-ring" viewBox="0 0 80 80">
-    <circle cx="40" cy="40" r="36" fill="none" stroke="#1e1e1e" stroke-width="2"/>
-    <circle id="timerArc" cx="40" cy="40" r="36" fill="none" stroke="#555" stroke-width="2"
-      stroke-dasharray="226" stroke-dashoffset="226" stroke-linecap="round"
-      transform="rotate(-90 40 40)" style="transition:stroke-dashoffset 0.5s linear,stroke 0.3s"/>
+  <svg class="timer-ring" viewBox="0 0 96 96">
+    <circle cx="48" cy="48" r="43" fill="none" stroke="#1e1e1e" stroke-width="2"/>
+    <circle id="timerArc" cx="48" cy="48" r="43" fill="none" stroke="#555" stroke-width="2"
+      stroke-dasharray="270" stroke-dashoffset="270" stroke-linecap="round"
+      transform="rotate(-90 48 48)" style="transition:stroke-dashoffset 0.5s linear,stroke 0.3s"/>
   </svg>
   <div class="timer-time" id="timerDisplay">REST</div>
   <div class="timer-status" id="timerStatus">TAP</div>
@@ -417,7 +423,7 @@ function closeDrawer(){document.getElementById('drawer').classList.remove('open'
 
 function calculate(){
   const w=parseFloat(document.getElementById('calcWeight').value),r=parseInt(document.getElementById('calcReps').value);
-  if(!w||!r||r<1)return;
+  if(!w||!r||r<1){document.getElementById('calcResults').classList.remove('show');return;}
   const orm=calcOrm(w,r);
   const ranges=[{label:'1RM (max)',pct:100},{label:'3\u20135 reps (strength)',pct:87},{label:'4\u20136 reps (strength+)',pct:83},{label:'5\u20136 reps (hybrid)',pct:80},{label:'6\u20138 reps (hypertrophy)',pct:75},{label:'8\u201310 reps (hypertrophy)',pct:70},{label:'10\u201312 reps (volume)',pct:65},{label:'12\u201315 reps (endurance)',pct:60}];
   document.getElementById('calcOrm').textContent=orm+' lb';
@@ -425,7 +431,7 @@ function calculate(){
   document.getElementById('calcResults').classList.add('show');
 }
 
-const CIRC=226;
+const CIRC=270;
 let timerTotal=90,timerRemaining=90,timerInterval=null,timerRunning=false,timerPanelOpen=false;
 const arcEl=document.getElementById('timerArc'),displayEl=document.getElementById('timerDisplay'),statusEl=document.getElementById('timerStatus'),bubbleEl=document.getElementById('timerBubble'),startBtn=document.getElementById('timerStartBtn');
 
@@ -450,10 +456,7 @@ function startPauseTimer(){
 function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerRemaining=timerTotal;startBtn.textContent='Start';updateTimerDisplay();}
 function toggleTimerPanel(){timerPanelOpen=!timerPanelOpen;document.getElementById('timerPanel').classList.toggle('show',timerPanelOpen);}
 
-let isDragging=false,dragStartX,dragStartY,bStartX,bStartY;
-bubbleEl.addEventListener('pointerdown',e=>{isDragging=false;dragStartX=e.clientX;dragStartY=e.clientY;const r=bubbleEl.getBoundingClientRect();bStartX=r.left;bStartY=r.top;bubbleEl.setPointerCapture(e.pointerId);});
-bubbleEl.addEventListener('pointermove',e=>{const dx=e.clientX-dragStartX,dy=e.clientY-dragStartY;if(Math.abs(dx)>5||Math.abs(dy)>5){isDragging=true;bubbleEl.style.right='auto';bubbleEl.style.bottom='auto';bubbleEl.style.left=Math.max(0,Math.min(window.innerWidth-72,bStartX+dx))+'px';bubbleEl.style.top=Math.max(0,Math.min(window.innerHeight-72,bStartY+dy))+'px';}});
-bubbleEl.addEventListener('pointerup',e=>{if(!isDragging)toggleTimerPanel();else{e.stopPropagation();e.preventDefault();}});
+bubbleEl.addEventListener('click', toggleTimerPanel);
 
 document.getElementById('hamburgerBtn').addEventListener('click',openDrawer);
 document.getElementById('drawerCloseBtn').addEventListener('click',closeDrawer);
@@ -461,6 +464,8 @@ document.getElementById('drawerOverlay').addEventListener('click',closeDrawer);
 document.getElementById('calcBtn').addEventListener('click',calculate);
 document.getElementById('calcWeight').addEventListener('keyup',e=>{if(e.key==='Enter')calculate();});
 document.getElementById('calcReps').addEventListener('keyup',e=>{if(e.key==='Enter')calculate();});
+document.getElementById('calcWeight').addEventListener('input',()=>{if(!document.getElementById('calcWeight').value)document.getElementById('calcResults').classList.remove('show');});
+document.getElementById('calcReps').addEventListener('input',()=>{if(!document.getElementById('calcReps').value)document.getElementById('calcResults').classList.remove('show');});
 document.getElementById('timerStartBtn').addEventListener('click',startPauseTimer);
 document.getElementById('timerResetBtn').addEventListener('click',resetTimer);
 document.getElementById('timerPresets').addEventListener('click',e=>{const p=e.target.closest('.timer-preset');if(p)setTimer(parseInt(p.dataset.seconds),p);});
@@ -474,7 +479,16 @@ document.getElementById('modalWeight').addEventListener('keyup',e=>{if(e.key==='
 document.getElementById('modalReps').addEventListener('keyup',e=>{if(e.key==='Enter')saveBaseline();});
 document.addEventListener('click',e=>{if(timerPanelOpen&&!e.target.closest('#timerPanel')&&!e.target.closest('#timerBubble')){timerPanelOpen=false;document.getElementById('timerPanel').classList.remove('show');}});
 
+let scrollTimer=null;
+window.addEventListener('scroll',()=>{bubbleEl.classList.add('scroll-fade');clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>bubbleEl.classList.remove('scroll-fade'),800);},{passive:true});
+
 updateTimerDisplay();renderBaselines();render();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/Fitness-Program/sw.js').catch(()=>{});
+  });
+}
 })();
 </script>
 </body>
