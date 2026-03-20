@@ -145,21 +145,30 @@
     .modal-reset:hover{color:var(--text-secondary);}
 
     /* TIMER */
-    .timer-bubble{position:fixed;bottom:calc(32px + var(--safe-bottom));right:24px;width:86px;height:86px;border-radius:50%;background:var(--bg-input);border:2px solid var(--border-vis);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:50;user-select:none;box-shadow:0 4px 24px rgba(0,0,0,0.6);transition:border-color var(--t-mid),transform 0.1s;}
+    .timer-bubble{position:fixed;bottom:calc(32px + var(--safe-bottom));right:24px;width:86px;height:86px;border-radius:50%;background:var(--bg-input);border:2px solid var(--border-vis);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;z-index:50;user-select:none;box-shadow:0 4px 24px rgba(0,0,0,0.6);transition:border-color var(--t-mid),transform 0.1s;-webkit-touch-callout:none;}
     .timer-bubble:active{transform:scale(0.95);}
     .timer-time{font-size:17px;font-family:var(--font-mono);color:var(--text-primary);line-height:1;font-weight:300;}
     .timer-status{font-size:9px;font-family:var(--font-mono);color:var(--text-muted);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;}
     .timer-ring{position:absolute;inset:-3px;border-radius:50%;pointer-events:none;}
-    .timer-panel{position:fixed;bottom:calc(130px + var(--safe-bottom));right:24px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:8px;padding:16px;z-index:50;min-width:188px;box-shadow:0 8px 32px rgba(0,0,0,0.7);opacity:0;pointer-events:none;transform:translateY(8px) scale(0.97);transition:opacity var(--t-fast),transform var(--t-fast);transform-origin:bottom right;}
+    /* Compact reset panel (bottom right, shown while running) */
+    .timer-panel{position:fixed;bottom:calc(130px + var(--safe-bottom));right:24px;background:var(--bg-card);border:1px solid var(--border-soft);border-radius:8px;padding:10px;z-index:50;box-shadow:0 8px 32px rgba(0,0,0,0.7);opacity:0;pointer-events:none;transform:translateY(8px) scale(0.97);transition:opacity var(--t-fast),transform var(--t-fast);transform-origin:bottom right;display:flex;flex-direction:column;gap:8px;}
     .timer-panel.show{opacity:1;pointer-events:all;transform:translateY(0) scale(1);}
-    .timer-panel-title{font-size:9px;letter-spacing:0.25em;color:var(--text-muted);font-family:var(--font-mono);text-transform:uppercase;margin-bottom:12px;}
-    .timer-presets{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
-    .timer-preset{background:var(--bg-input);border:1px solid var(--border-vis);color:var(--text-secondary);font-family:var(--font-mono);font-size:12px;padding:10px 4px;cursor:pointer;border-radius:4px;text-align:center;transition:background var(--t-fast),border-color var(--t-fast),color var(--t-fast);font-weight:300;}
-    .timer-preset:hover{background:#222;color:var(--text-primary);border-color:var(--text-ghost);}
-    .timer-preset.active{border-color:var(--text-dim);color:var(--text-primary);}
-    .timer-controls{display:flex;gap:8px;}
-    .timer-ctrl-btn{flex:1;background:var(--bg-input);border:1px solid var(--border-vis);color:var(--text-secondary);font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;padding:9px 4px;cursor:pointer;border-radius:4px;transition:background var(--t-fast),color var(--t-fast);font-weight:300;}
+    .timer-ctrl-btn{background:var(--bg-input);border:1px solid var(--border-vis);color:var(--text-secondary);font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;padding:10px 20px;cursor:pointer;border-radius:4px;transition:background var(--t-fast),color var(--t-fast);font-weight:300;white-space:nowrap;}
     .timer-ctrl-btn:hover{background:#222;color:var(--text-primary);}
+    .timer-ctrl-stop{color:var(--text-muted);}
+    .timer-ctrl-stop:hover{color:#e05555;border-color:#e05555;background:#1a1010;}
+    /* Timer settings modal — centered overlay */
+    .timer-settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity var(--t-mid);}
+    .timer-settings-overlay.open{opacity:1;pointer-events:all;}
+    .timer-settings-modal{background:var(--bg-card);border:1px solid var(--border-vis);border-radius:10px;padding:24px;width:100%;max-width:320px;transform:scale(0.95);transition:transform var(--t-mid);}
+    .timer-settings-overlay.open .timer-settings-modal{transform:scale(1);}
+    .timer-settings-title{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);margin-bottom:18px;text-align:center;}
+    .timer-settings-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;}
+    .timer-setting-btn{background:var(--bg-input);border:1px solid var(--border-vis);color:var(--text-secondary);font-family:var(--font-mono);font-size:13px;padding:13px 6px;cursor:pointer;border-radius:5px;text-align:center;transition:background var(--t-fast),border-color var(--t-fast),color var(--t-fast);font-weight:300;}
+    .timer-setting-btn:hover{background:#222;color:var(--text-primary);border-color:var(--text-ghost);}
+    .timer-setting-btn.active{border-color:var(--text-dim);color:var(--text-primary);background:#1e1e1e;}
+    .timer-settings-cancel{width:100%;background:none;border:1px solid var(--border-soft);color:var(--text-muted);font-family:var(--font-mono);font-size:10px;letter-spacing:0.15em;text-transform:uppercase;padding:12px;cursor:pointer;border-radius:4px;transition:border-color var(--t-fast),color var(--t-fast);}
+    .timer-settings-cancel:hover{border-color:#333;color:var(--text-dim);}
 
     /* ANIMATIONS */
     @keyframes fadeDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
@@ -172,6 +181,7 @@
       .timer-bubble .timer-time{font-size:13px;}
       .timer-bubble .timer-status{font-size:8px;}
       .timer-panel{right:16px;bottom:calc(106px + var(--safe-bottom));}
+      .timer-settings-grid{grid-template-columns:repeat(3,1fr);}
     }
     .timer-bubble.scroll-fade{opacity:0.35;transition:opacity 0.3s ease,border-color var(--t-mid),transform 0.1s;}
     .timer-bubble.scroll-fade:hover,.timer-bubble.scroll-fade:active{opacity:1;}
@@ -247,17 +257,31 @@
   </div>
 </div>
 
+<!-- Timer reset panel — shown only while timer is running -->
 <div class="timer-panel" id="timerPanel">
-  <div class="timer-panel-title">Rest Timer</div>
-  <div class="timer-presets" id="timerPresets">
-    <div class="timer-preset" data-seconds="60">1:00</div>
-    <div class="timer-preset" data-seconds="90">1:30</div>
-    <div class="timer-preset" data-seconds="120">2:00</div>
-    <div class="timer-preset" data-seconds="180">3:00</div>
-  </div>
-  <div class="timer-controls">
-    <button class="timer-ctrl-btn" id="timerStartBtn">Start</button>
-    <button class="timer-ctrl-btn" id="timerResetBtn">Reset</button>
+  <button class="timer-ctrl-btn" id="timerResetBtn">↺ Reset</button>
+  <button class="timer-ctrl-btn timer-ctrl-stop" id="timerStopBtn">✕ Stop</button>
+</div>
+
+<!-- Timer settings modal — centered overlay, opened by press-and-hold -->
+<div class="timer-settings-overlay" id="timerSettingsOverlay">
+  <div class="timer-settings-modal">
+    <div class="timer-settings-title">Set Timer</div>
+    <div class="timer-settings-grid" id="timerSettingsGrid">
+      <button class="timer-setting-btn" data-seconds="30">0:30</button>
+      <button class="timer-setting-btn" data-seconds="45">0:45</button>
+      <button class="timer-setting-btn" data-seconds="60">1:00</button>
+      <button class="timer-setting-btn" data-seconds="75">1:15</button>
+      <button class="timer-setting-btn" data-seconds="90">1:30</button>
+      <button class="timer-setting-btn" data-seconds="105">1:45</button>
+      <button class="timer-setting-btn" data-seconds="120">2:00</button>
+      <button class="timer-setting-btn" data-seconds="150">2:30</button>
+      <button class="timer-setting-btn" data-seconds="180">3:00</button>
+      <button class="timer-setting-btn" data-seconds="240">4:00</button>
+      <button class="timer-setting-btn" data-seconds="300">5:00</button>
+      <button class="timer-setting-btn" data-seconds="600">10:00</button>
+    </div>
+    <button class="timer-settings-cancel" id="timerSettingsCancel">Cancel</button>
   </div>
 </div>
 
@@ -432,31 +456,128 @@ function calculate(){
 }
 
 const CIRC=270;
-let timerTotal=90,timerRemaining=90,timerInterval=null,timerRunning=false,timerPanelOpen=false;
-const arcEl=document.getElementById('timerArc'),displayEl=document.getElementById('timerDisplay'),statusEl=document.getElementById('timerStatus'),bubbleEl=document.getElementById('timerBubble'),startBtn=document.getElementById('timerStartBtn');
+// timerState: 'idle' | 'running' | 'paused' | 'done'
+let timerTotal=90,timerRemaining=90,timerInterval=null,timerState='idle',timerPanelOpen=false;
+const arcEl=document.getElementById('timerArc'),displayEl=document.getElementById('timerDisplay'),statusEl=document.getElementById('timerStatus'),bubbleEl=document.getElementById('timerBubble');
+
+function fmtTime(s){const m=Math.floor(s/60),sec=s%60;return m+':'+(sec<10?'0':'')+sec;}
 
 function updateTimerDisplay(){
-  const m=Math.floor(timerRemaining/60),s=timerRemaining%60;
-  displayEl.textContent=(timerRemaining===timerTotal&&!timerRunning)?'REST':m+':'+(s<10?'0':'')+s;
+  const day=DAYS.find(d=>d.id===activeDay),accent=day?day.accent:'#888';
   const pct=timerTotal>0?timerRemaining/timerTotal:0;
   arcEl.style.strokeDashoffset=CIRC*(1-pct);
-  const day=DAYS.find(d=>d.id===activeDay),accent=day?day.accent:'#888';
-  if(timerRunning){arcEl.style.stroke=accent;bubbleEl.style.borderColor=accent+'66';statusEl.textContent='REST';}
-  else if(timerRemaining===0){arcEl.style.stroke='#2AE87B';bubbleEl.style.borderColor='#2AE87B66';statusEl.textContent='DONE';}
-  else{arcEl.style.stroke='#555';bubbleEl.style.borderColor='var(--border-vis)';statusEl.textContent='TAP';}
+  if(timerState==='running'){
+    displayEl.textContent=fmtTime(timerRemaining);
+    arcEl.style.stroke=accent;bubbleEl.style.borderColor=accent+'66';statusEl.textContent='TAP';
+  } else if(timerState==='paused'){
+    displayEl.textContent=fmtTime(timerRemaining);
+    arcEl.style.stroke='#666';bubbleEl.style.borderColor='var(--border-vis)';statusEl.textContent='RESUME';
+  } else if(timerState==='done'){
+    displayEl.textContent='0:00';
+    arcEl.style.strokeDashoffset=CIRC;
+    arcEl.style.stroke='#2AE87B';bubbleEl.style.borderColor='#2AE87B66';statusEl.textContent='TAP';
+  } else {
+    // idle — show the current timer setting
+    displayEl.textContent=fmtTime(timerTotal);
+    arcEl.style.strokeDashoffset=CIRC;
+    arcEl.style.stroke='#555';bubbleEl.style.borderColor='var(--border-vis)';statusEl.textContent='TAP';
+  }
 }
 
-function setTimer(seconds,el){clearInterval(timerInterval);timerRunning=false;timerTotal=seconds;timerRemaining=seconds;document.querySelectorAll('.timer-preset').forEach(b=>b.classList.remove('active'));if(el)el.classList.add('active');startBtn.textContent='Start';updateTimerDisplay();}
-function startPauseTimer(){
-  if(timerRemaining===0){resetTimer();return;}
-  if(timerRunning){clearInterval(timerInterval);timerRunning=false;startBtn.textContent='Resume';statusEl.textContent='PAUSED';}
-  else{timerRunning=true;startBtn.textContent='Pause';timerInterval=setInterval(()=>{timerRemaining--;updateTimerDisplay();if(timerRemaining<=0){clearInterval(timerInterval);timerRunning=false;timerRemaining=0;startBtn.textContent='Start';if(navigator.vibrate)navigator.vibrate([200,100,200]);}},1000);}
+function startTimer(){
+  if(timerRemaining<=0){timerRemaining=timerTotal;}
+  timerState='running';
+  timerInterval=setInterval(()=>{
+    timerRemaining--;
+    if(timerRemaining<=0){
+      clearInterval(timerInterval);timerRemaining=0;timerState='done';
+      if(navigator.vibrate)navigator.vibrate([200,100,200]);
+      hidePanelIfOpen();
+    }
+    updateTimerDisplay();
+  },1000);
   updateTimerDisplay();
 }
-function resetTimer(){clearInterval(timerInterval);timerRunning=false;timerRemaining=timerTotal;startBtn.textContent='Start';updateTimerDisplay();}
-function toggleTimerPanel(){timerPanelOpen=!timerPanelOpen;document.getElementById('timerPanel').classList.toggle('show',timerPanelOpen);}
 
-bubbleEl.addEventListener('click', toggleTimerPanel);
+function resetTimer(){
+  clearInterval(timerInterval);timerState='idle';timerRemaining=timerTotal;
+  hidePanelIfOpen();
+  updateTimerDisplay();
+}
+
+function stopTimer(){
+  // Stop = pause at current position (tap bubble to resume)
+  clearInterval(timerInterval);timerState='paused';
+  hidePanelIfOpen();
+  updateTimerDisplay();
+}
+
+function hidePanelIfOpen(){
+  if(timerPanelOpen){timerPanelOpen=false;document.getElementById('timerPanel').classList.remove('show');}
+}
+
+function setTimer(seconds){
+  clearInterval(timerInterval);
+  timerTotal=seconds;timerRemaining=seconds;timerState='idle';
+  document.querySelectorAll('.timer-setting-btn').forEach(b=>{
+    b.classList.toggle('active',parseInt(b.dataset.seconds)===seconds);
+  });
+  updateTimerDisplay();
+}
+
+function toggleResetPanel(){
+  timerPanelOpen=!timerPanelOpen;
+  document.getElementById('timerPanel').classList.toggle('show',timerPanelOpen);
+}
+
+// Tap logic per state; long-press = open settings modal
+let holdTimeout=null,holdFired=false;
+function onBubbleDown(e){
+  holdFired=false;
+  holdTimeout=setTimeout(()=>{
+    holdFired=true;
+    openTimerSettings();
+  },500);
+}
+function onBubbleUp(e){
+  clearTimeout(holdTimeout);
+  if(holdFired)return;
+  // Short tap — behaviour depends on state
+  if(timerState==='idle'){
+    startTimer();
+  } else if(timerState==='running'){
+    toggleResetPanel();
+  } else if(timerState==='paused'){
+    startTimer(); // resume
+  } else if(timerState==='done'){
+    // reset back to idle showing time
+    timerRemaining=timerTotal;timerState='idle';updateTimerDisplay();
+  }
+}
+function onBubbleLeave(){clearTimeout(holdTimeout);}
+bubbleEl.addEventListener('mousedown',onBubbleDown);
+bubbleEl.addEventListener('mouseup',onBubbleUp);
+bubbleEl.addEventListener('mouseleave',onBubbleLeave);
+bubbleEl.addEventListener('touchstart',onBubbleDown,{passive:true});
+bubbleEl.addEventListener('touchend',onBubbleUp);
+bubbleEl.addEventListener('touchcancel',onBubbleLeave);
+
+function openTimerSettings(){
+  document.getElementById('timerSettingsOverlay').classList.add('open');
+  document.querySelectorAll('.timer-setting-btn').forEach(b=>{
+    b.classList.toggle('active',parseInt(b.dataset.seconds)===timerTotal);
+  });
+}
+function closeTimerSettings(){document.getElementById('timerSettingsOverlay').classList.remove('open');}
+
+document.getElementById('timerSettingsGrid').addEventListener('click',e=>{
+  const btn=e.target.closest('.timer-setting-btn');
+  if(btn){setTimer(parseInt(btn.dataset.seconds));closeTimerSettings();}
+});
+document.getElementById('timerSettingsCancel').addEventListener('click',closeTimerSettings);
+document.getElementById('timerSettingsOverlay').addEventListener('click',e=>{
+  if(e.target===document.getElementById('timerSettingsOverlay'))closeTimerSettings();
+});
 
 document.getElementById('hamburgerBtn').addEventListener('click',openDrawer);
 document.getElementById('drawerCloseBtn').addEventListener('click',closeDrawer);
@@ -466,9 +587,9 @@ document.getElementById('calcWeight').addEventListener('keyup',e=>{if(e.key==='E
 document.getElementById('calcReps').addEventListener('keyup',e=>{if(e.key==='Enter')calculate();});
 document.getElementById('calcWeight').addEventListener('input',()=>{if(!document.getElementById('calcWeight').value)document.getElementById('calcResults').classList.remove('show');});
 document.getElementById('calcReps').addEventListener('input',()=>{if(!document.getElementById('calcReps').value)document.getElementById('calcResults').classList.remove('show');});
-document.getElementById('timerStartBtn').addEventListener('click',startPauseTimer);
 document.getElementById('timerResetBtn').addEventListener('click',resetTimer);
-document.getElementById('timerPresets').addEventListener('click',e=>{const p=e.target.closest('.timer-preset');if(p)setTimer(parseInt(p.dataset.seconds),p);});
+document.getElementById('timerStopBtn').addEventListener('click',stopTimer);
+document.addEventListener('click',e=>{if(timerPanelOpen&&!e.target.closest('#timerPanel')&&!e.target.closest('#timerBubble')){timerPanelOpen=false;document.getElementById('timerPanel').classList.remove('show');}});
 document.getElementById('modalSaveBtn').addEventListener('click',saveBaseline);
 document.getElementById('modalCancelBtn').addEventListener('click',closeBaselineModal);
 document.getElementById('modalResetBtn').addEventListener('click',resetBaseline);
@@ -477,7 +598,6 @@ document.getElementById('modalWeight').addEventListener('input',updateModalPrevi
 document.getElementById('modalReps').addEventListener('input',updateModalPreview);
 document.getElementById('modalWeight').addEventListener('keyup',e=>{if(e.key==='Enter')saveBaseline();});
 document.getElementById('modalReps').addEventListener('keyup',e=>{if(e.key==='Enter')saveBaseline();});
-document.addEventListener('click',e=>{if(timerPanelOpen&&!e.target.closest('#timerPanel')&&!e.target.closest('#timerBubble')){timerPanelOpen=false;document.getElementById('timerPanel').classList.remove('show');}});
 
 let scrollTimer=null;
 window.addEventListener('scroll',()=>{bubbleEl.classList.add('scroll-fade');clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>bubbleEl.classList.remove('scroll-fade'),800);},{passive:true});
