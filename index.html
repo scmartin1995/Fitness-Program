@@ -505,7 +505,7 @@ function updateTimerDisplay(){
   arcEl.style.strokeDashoffset=CIRC*(1-pct);
   if(timerState==='running'){
     displayEl.textContent=fmtTime(timerRemaining);
-    arcEl.style.stroke=accent;bubbleEl.style.borderColor=accent+'66';statusEl.textContent='TAP';
+    arcEl.style.stroke=accent;bubbleEl.style.borderColor=accent+'66';statusEl.textContent='PAUSE';
   } else if(timerState==='paused'){
     displayEl.textContent=fmtTime(timerRemaining);
     arcEl.style.stroke='#666';bubbleEl.style.borderColor='var(--border-vis)';statusEl.textContent='RESUME';
@@ -583,8 +583,13 @@ function onBubbleUp(e){
   if(timerState==='idle'){
     startTimer();
   } else if(timerState==='running'){
-    toggleResetPanel();
+    // Pause on tap — show reset panel so Stop/Reset are reachable
+    clearInterval(timerInterval);timerState='paused';
+    timerPanelOpen=true;
+    document.getElementById('timerPanel').classList.add('show');
+    updateTimerDisplay();
   } else if(timerState==='paused'){
+    hidePanelIfOpen();
     startTimer(); // resume
   } else if(timerState==='done'){
     // reset back to idle showing time
