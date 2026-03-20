@@ -213,9 +213,36 @@
     .hc-track::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--text-ghost);transition:transform var(--t-mid),background var(--t-mid);}
     .hc-switch input:checked + .hc-track{background:#fff;border-color:#fff;}
     .hc-switch input:checked + .hc-track::after{transform:translateX(18px);background:#000;}
+
+    /* DRAWER NAV LINKS */
+    .drawer-nav{display:flex;flex-direction:column;border-bottom:1px solid var(--border-dim);}
+    .drawer-nav-btn{background:none;border:none;border-bottom:1px solid var(--border-dim);color:var(--text-secondary);cursor:pointer;font-family:var(--font-mono);font-size:10px;letter-spacing:0.2em;text-transform:uppercase;padding:16px 24px;text-align:left;display:flex;justify-content:space-between;align-items:center;min-height:48px;transition:background var(--t-fast),color var(--t-fast);}
+    .drawer-nav-btn:last-child{border-bottom:none;}
+    .drawer-nav-btn:hover{background:rgba(255,255,255,0.03);color:var(--text-primary);}
+    .drawer-nav-arrow{font-size:11px;color:var(--text-ghost);transition:color var(--t-fast);}
+    .drawer-nav-btn:hover .drawer-nav-arrow{color:var(--text-muted);}
+
+    /* STRENGTH PAGE — full-screen slide panel */
+    .strength-page{position:fixed;inset:0;background:var(--bg);z-index:200;transform:translateX(100%);transition:transform var(--t-mid);overflow-y:auto;}
+    .strength-page.open{transform:translateX(0);}
+    .strength-page-header{padding:calc(24px + var(--safe-top)) 24px 20px;border-bottom:1px solid var(--border-dim);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--bg-card);z-index:1;backdrop-filter:blur(8px);}
+    .strength-page-title{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);}
+    .strength-page-close{background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:18px;line-height:1;padding:0;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:color var(--t-fast);}
+    .strength-page-close:hover{color:var(--text-primary);}
+    .strength-page-body{max-width:600px;margin:0 auto;padding:32px 24px calc(48px + var(--safe-bottom));}
+    .strength-page-section{margin-bottom:48px;}
+    .strength-page-section-title{font-size:22px;font-weight:400;letter-spacing:-0.01em;color:var(--text-primary);font-family:var(--font-serif);margin-bottom:6px;}
+    .strength-page-section-sub{font-size:11px;color:var(--text-dim);font-family:var(--font-mono);font-weight:300;margin-bottom:24px;}
+    /* Baselines on strength page — full width, no hiding of orm col */
+    .strength-page .baseline-row{grid-template-columns:1fr auto auto auto;}
+    .strength-page .baseline-orm{display:block !important;}
+    @media(max-width:480px){
+      .strength-page .baseline-row{grid-template-columns:1fr auto auto;}
+      .strength-page .baseline-orm{display:none !important;}
+    }
   </style>
 </head>
-<body>
+<body class="hc">
 
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
@@ -224,51 +251,16 @@
     <span class="drawer-title">Program Info</span>
     <button class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">&#x2715;</button>
   </div>
-  <div class="hc-row">
-    <span class="hc-label">High Contrast</span>
-    <label class="hc-switch" aria-label="Toggle high contrast mode">
-      <input type="checkbox" id="hcToggle" />
-      <span class="hc-track"></span>
-    </label>
-  </div>
-  <div class="drawer-section">
-    <div class="drawer-section-title">Rep Max Calculator</div>
-    <div class="calc-row">
-      <div><div class="calc-label">Weight (lb)</div><input class="calc-input" type="number" id="calcWeight" placeholder="225" inputmode="decimal" /></div>
-      <div><div class="calc-label">Reps</div><input class="calc-input" type="number" id="calcReps" placeholder="5" inputmode="numeric" min="1" max="30" /></div>
-    </div>
-    <button class="calc-btn" id="calcBtn">Calculate</button>
-    <div class="calc-results" id="calcResults">
-      <div class="calc-orm-display">Est. 1RM: <span id="calcOrm">&#x2014;</span></div>
-      <div id="calcRows"></div>
-    </div>
-  </div>
-  <div class="drawer-section">
-    <div class="drawer-section-title">Progression Rules</div>
-    <div class="prog-row"><div class="prog-label">Primary Lifts</div><div class="prog-rule">Hit top reps &#x2192; +2.5&#x2013;5 lb next session. Miss reps &#x2192; hold load.</div></div>
-    <div class="prog-row"><div class="prog-label">AR-7 Blocks</div><div class="prog-rule">Reduce rest first &#x2192; add reps &#x2192; small load increase every 2&#x2013;3 weeks.</div></div>
-    <div class="prog-row"><div class="prog-label">Micro Arms (Push/Pull)</div><div class="prog-rule">Add reps first, then load slowly. Stop 1&#x2013;2 reps from failure.</div></div>
-    <div class="prog-row"><div class="prog-label">Close-Grip Bench</div><div class="prog-rule">Same logic as Bench and OHP &#x2014; hit top reps, earn the load.</div></div>
-    <div class="prog-row"><div class="prog-label">EZ-Bar Curl (Sunday)</div><div class="prog-rule">Add reps first (6&#x2192;8), then +2.5 lb.</div></div>
-    <div class="prog-row"><div class="prog-label">Bulgarian Split Squat</div><div class="prog-rule">Add reps before load. Keep it submaximal &#x2014; legs are pre-fatigued.</div></div>
-    <div class="prog-row"><div class="prog-label">Single-Leg RDL</div><div class="prog-rule">Do not aggressively progress. Pattern quality is the goal. Add a 3-sec pause at bottom before adding load.</div></div>
-    <div class="prog-row"><div class="prog-label">Hip Thrust</div><div class="prog-rule">+5 lb every 2 weeks if form is clean through full ROM.</div></div>
-    <div class="prog-row"><div class="prog-label">Landmine Rotations</div><div class="prog-rule">Train speed and pattern first &#x2014; load increases only every 3&#x2013;4 weeks.</div></div>
-    <div class="prog-row"><div class="prog-label">Farmer Carries</div><div class="prog-rule">Increase distance before load.</div></div>
-  </div>
-  <div class="drawer-section">
-    <div class="drawer-section-title">Recovery Guardrails</div>
-    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Deload every 6&#x2013;8 weeks</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Eat enough carbs</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Sleep is mandatory</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Never AR-7: deadlifts, heavy squats, Olympic lifts</div></div>
-  </div>
-  <div class="drawer-section">
-    <div class="drawer-section-title">Golf Notes</div>
-    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Landmine + cable rotations are pattern training &#x2014; ego stays outside</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Hip mobility unlocks rotational power you already have</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Farmer carries = grip training + spinal decompression</div></div>
-    <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&#x2014; Pallof Press builds anti-rotation stability that holds under fatigue</div></div>
+
+  <div class="drawer-nav">
+    <button class="drawer-nav-btn" id="openStrengthPageBtn">
+      Strength &amp; Calculator
+      <span class="drawer-nav-arrow">&#x203A;</span>
+    </button>
+    <button class="drawer-nav-btn" id="openProgPageBtn">
+      Progression &amp; Recovery
+      <span class="drawer-nav-arrow">&#x203A;</span>
+    </button>
   </div>
 </div>
 
@@ -286,9 +278,74 @@
 <div class="tabs-wrap"><div class="tabs" id="tabs"></div></div>
 <div class="content" id="content"></div>
 
-<div class="bottom" id="bottomSection">
-  <div class="bottom-inner">
-    <div class="baselines" id="baselinesSection"></div>
+<!-- Strength page is now accessed via drawer nav -->
+
+<!-- PROGRESSION PAGE — full-screen panel -->
+<div class="strength-page" id="progPage">
+  <div class="strength-page-header">
+    <span class="strength-page-title">Progression &amp; Recovery</span>
+    <button class="strength-page-close" id="progPageClose" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="strength-page-body">
+
+    <div class="strength-page-section">
+      <div class="strength-page-section-title">Progression Rules</div>
+      <div class="strength-page-section-sub">General rules that apply across the program</div>
+      <div class="prog-row"><div class="prog-label">Primary Lifts</div><div class="prog-rule">Hit top reps &rarr; +2.5&ndash;5 lb next session. Miss reps &rarr; hold load.</div></div>
+      <div class="prog-row"><div class="prog-label">AR-7 Blocks</div><div class="prog-rule">Reduce rest first &rarr; add reps &rarr; small load increase every 2&ndash;3 weeks.</div></div>
+    </div>
+
+    <div class="strength-page-section">
+      <div class="strength-page-section-title">Recovery Guardrails</div>
+      <div class="strength-page-section-sub">Non-negotiable</div>
+      <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&mdash; Deload every 6&ndash;8 weeks</div></div>
+      <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&mdash; Eat enough carbs</div></div>
+      <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&mdash; Sleep is mandatory</div></div>
+      <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&mdash; Never AR-7: deadlifts, heavy squats, Olympic lifts</div></div>
+    </div>
+
+    <div class="strength-page-section">
+      <div class="strength-page-section-title">Golf Notes</div>
+      <div class="strength-page-section-sub">Intent behind the athletic work</div>
+      <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&mdash; Landmine + cable rotations are pattern training &mdash; ego stays outside</div></div>
+      <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&mdash; Hip mobility unlocks rotational power you already have</div></div>
+      <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&mdash; Farmer carries = grip training + spinal decompression</div></div>
+      <div class="prog-row"><div class="prog-rule" style="color:var(--text-dim)">&mdash; Pallof Press builds anti-rotation stability that holds under fatigue</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- STRENGTH PAGE — full-screen panel -->
+<div class="strength-page" id="strengthPage">
+  <div class="strength-page-header">
+    <span class="strength-page-title">Strength &amp; Calculator</span>
+    <button class="strength-page-close" id="strengthPageClose" aria-label="Close">&#x2715;</button>
+  </div>
+  <div class="strength-page-body">
+
+    <!-- Strength Baselines -->
+    <div class="strength-page-section">
+      <div class="strength-page-section-title">Strength Baselines</div>
+      <div class="strength-page-section-sub">Tap Edit to update from a recent set &mdash; 1RM and working weights recalculate automatically</div>
+      <div id="baselinesSection"></div>
+    </div>
+
+    <!-- 1RM Calculator -->
+    <div class="strength-page-section">
+      <div class="strength-page-section-title">Rep Max Calculator</div>
+      <div class="strength-page-section-sub">Estimate your 1RM and training percentages from any working set</div>
+      <div class="calc-row">
+        <div><div class="calc-label">Weight (lb)</div><input class="calc-input" type="number" id="calcWeight" placeholder="225" inputmode="decimal" /></div>
+        <div><div class="calc-label">Reps</div><input class="calc-input" type="number" id="calcReps" placeholder="5" inputmode="numeric" min="1" max="30" /></div>
+      </div>
+      <button class="calc-btn" id="calcBtn">Calculate</button>
+      <div class="calc-results" id="calcResults">
+        <div class="calc-orm-display">Est. 1RM: <span id="calcOrm">&#x2014;</span></div>
+        <div id="calcRows"></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -359,32 +416,32 @@ const DAYS=[
     {title:'Primary Strength',items:[{name:'Barbell Bench Press',sets:'4 \xD7 4\u20136 @ 210\u2013215 lb',note:'2\u20133 min rest \xB7 Progress to 220 when hitting 6 across all 4 sets'},{name:'Standing Overhead Press',sets:'3 \xD7 5\u20136 @ 125\u2013130 lb',note:'2 min rest \xB7 Build from 125, earn 130'}]},
     {title:'AR-7 Block \u2014 Chest Focus',ar7:true,items:[{name:'Action: Incline DB Press',sets:'6\u20138 reps',note:''},{name:'Reaction: DB Fly or Pec Deck',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest'}]},
     {title:'Accessories',items:[{name:'Dumbbell Lateral Raises',sets:'3 \xD7 12\u201315',note:''}]},
-    {title:'Micro Arm Add-On \u2014 Triceps',items:[{name:'Rope Pushdowns or Overhead Cable Extensions',sets:'3 \xD7 10\u201312',note:'~60 sec rest'}]},
+    {title:'Micro Arm Add-On \u2014 Triceps',items:[{name:'Rope Pushdowns or Overhead Cable Extensions',sets:'3 \xD7 10\u201312',note:'~60 sec rest \xB7 Progression: add reps first, then load slowly \u2014 stop 1\u20132 reps from failure'}]},
   ]},
   {id:'pull',day:'Friday',label:'PULL',sub:'Back \xB7 Rear Delts \xB7 Biceps',accent:'#2A7BE8',duration:'~75 min',sections:[
     {title:'Warm-Up',items:[{name:'Dip Position Leg Raises',sets:'2 \xD7 10',note:'Then ramp sets into Pull-Ups'}]},
     {title:'Primary Strength',items:[{name:'Weighted Pull-Ups or Lat Pulldown',sets:'4 \xD7 5\u20136',note:'2 min rest'},{name:'Barbell Row or Chest-Supported Row',sets:'3 \xD7 5\u20136',note:'2 min rest'}]},
     {title:'AR-7 Block \u2014 Back Focus',ar7:true,items:[{name:'Action: One-Arm DB Row',sets:'6\u20138 reps / side',note:''},{name:'Reaction: Straight-Arm Pulldown or Band Pullover',sets:'12\u201315 reps',note:'7 rounds \xB7 minimal rest'}]},
     {title:'Accessories',items:[{name:'Dirty 30s',sets:'3 \xD7 15',note:'Supinated \xD710 \u2192 Neutral \xD710 \u2192 Hip drive neutral \xD710'}]},
-    {title:'Micro Arm Add-On \u2014 Biceps',items:[{name:'EZ-Bar Curl or DB Curl',sets:'3 \xD7 10\u201312',note:'~60 sec rest'}]},
-    {title:'Golf Add-On',items:[{name:'Farmer Carries or Dead Hangs',sets:'2 \xD7 30\u201340m / 2 \xD7 20\u201330 sec',note:'~60 sec rest \xB7 Finish session here'}]},
+    {title:'Micro Arm Add-On \u2014 Biceps',items:[{name:'Hammer Curl',sets:'3 \xD7 10\u201312',note:'~60 sec rest \xB7 Progression: add reps first, then load slowly \u2014 stop 1\u20132 reps from failure'}]},
+    {title:'Golf Add-On',items:[{name:'Farmer Carries or Dead Hangs',sets:'2 \xD7 30\u201340m / 2 \xD7 20\u201330 sec',note:'~60 sec rest \xB7 Finish session here \xB7 Progression: increase distance before load'}]},
   ]},
   {id:'legs',day:'Saturday',label:'LEGS',sub:'Quads \xB7 Hamstrings \xB7 Glutes \xB7 Core',accent:'#2AE87B',duration:'~80 min',sections:[
     {title:'Warm-Up',items:[{name:'Feet Elevated Side Crunches',sets:'2 \xD7 5',note:'Neutral push-up \u2192 lateral flexion \u2192 back to neutral'},{name:'90/90 Hip Switches',sets:'2 \xD7 10',note:''},{name:'Hip CARs',sets:'2 \xD7 5 / side',note:'Then ramp sets into Squat'}]},
     {title:'Primary Strength',items:[{name:'Back Squat or Safety Bar Squat',sets:'4 \xD7 3\u20135 @ 275\u2013285 lb',note:'2\u20133 min rest \xB7 295 is next target'},{name:'Romanian Deadlift',sets:'3 \xD7 5\u20136 @ 185\u2013195 lb',note:'2 min rest \xB7 Pattern over load'}]},
     {title:'AR-7 Block \u2014 Quad Focus',ar7:true,items:[{name:'Action: Leg Press or Front Squat',sets:'6\u20138 reps',note:''},{name:'Reaction: Sissy Squats',sets:'10\u201312 reps',note:'7 rounds \xB7 15\u201320 sec rest'}]},
     {title:'Core / Anti-Rotation',items:[{name:'Hanging Leg Raises or Ab Wheel',sets:'3 \xD7 10\u201312',note:'Alternate weekly with Pallof Press'},{name:'Pallof Press (alternate week)',sets:'3 \xD7 10\u201312 / side',note:'Light-moderate, slow and controlled'}]},
-    {title:'Golf Power Add-On',items:[{name:'Landmine Rotations',sets:'3 \xD7 8\u201310 / side',note:'~60 sec rest \xB7 Pattern training, not strength work'}]},
+    {title:'Golf Power Add-On',items:[{name:'Landmine Rotations',sets:'3 \xD7 8\u201310 / side',note:'~60 sec rest \xB7 Pattern training, not strength work \xB7 Progression: train speed and pattern first \u2014 load increases only every 3\u20134 weeks'}]},
   ]},
   {id:'arms',day:'Sunday',label:'ARMS + LEGS',sub:'Biceps \xB7 Triceps \xB7 Unilateral Legs \xB7 Glutes',accent:'#E8C42A',duration:'~70 min',sections:[
     {title:'Warm-Up',items:[{name:'Wrist Circles + Forearm Stretch',sets:'2 \xD7 10 each direction',note:''},{name:'Band Pull-Aparts',sets:'2 \xD7 15',note:'Shoulder health primer'},{name:'Cable Rope Pushdown (light)',sets:'1 \xD7 20',note:'Elbow warm-up'},{name:'EZ-Bar Curl (light)',sets:'1 \xD7 15',note:'Then ramp into Close-Grip Bench'}]},
-    {title:'Primary Strength \u2014 Triceps',items:[{name:'Close-Grip Bench Press',sets:'4 \xD7 5\u20136 @ 155\u2013165 lb',note:'2 min rest \xB7 Hit 6 across all 4 to earn next load'}]},
-    {title:'Primary Strength \u2014 Biceps',items:[{name:'EZ-Bar Curl or Barbell Curl',sets:'4 \xD7 6\u20138',note:'90 sec rest \xB7 3 sec eccentric, no body English'}]},
+    {title:'Primary Strength \u2014 Triceps',items:[{name:'Close-Grip Bench Press',sets:'4 \xD7 5\u20136 @ 155\u2013165 lb',note:'2 min rest \xB7 Hit 6 across all 4 to earn next load \xB7 Same progression logic as Bench and OHP'}]},
+    {title:'Primary Strength \u2014 Biceps',items:[{name:'EZ-Bar Curl or Barbell Curl',sets:'4 \xD7 6\u20138',note:'90 sec rest \xB7 3 sec eccentric, no body English \xB7 Progression: add reps first (6\u21928), then +2.5 lb'}]},
     {title:'AR-7 Block \u2014 Triceps Focus',ar7:true,items:[{name:'Action: Overhead Cable Extension or Skull Crusher',sets:'8\u201310 reps',note:'Long head stretch position'},{name:'Reaction: Rope Pushdown',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest \xB7 Lateral head in shortened position'}]},
-    {title:'Superset \u2014 Biceps Hypertrophy',items:[{name:'A1: Incline DB Curl',sets:'3 \xD7 10\u201312',note:'Long head stretch'},{name:'A2: Hammer Curl',sets:'3 \xD7 10\u201312',note:'60 sec between supersets \xB7 Brachialis + grip transfer'}]},
-    {title:'Unilateral Legs \u2014 Quad',items:[{name:'Bulgarian Split Squat',sets:'3 \xD7 8\u201310 / leg @ 50\u201370 lb DBs',note:'90 sec rest \xB7 Submaximal \u2014 legs are pre-fatigued from Saturday'}]},
-    {title:'Unilateral Legs \u2014 Posterior Chain',items:[{name:'Single-Leg RDL',sets:'3 \xD7 8\u201310 / leg',note:'90 sec rest \xB7 Light-moderate \xB7 Pattern quality over load'}]},
-    {title:'Glute Isolation',items:[{name:'Hip Thrust or Cable Pull-Through',sets:'3 \xD7 12\u201315',note:'60 sec rest \xB7 Full hip extension, controlled squeeze'}]},
+    {title:'Superset \u2014 Biceps Hypertrophy',items:[{name:'A1: Incline DB Curl',sets:'3 \xD7 10\u201312',note:'Long head stretch'},{name:'A2: Concentration Curl or Spider Curl',sets:'3 \xD7 10\u201312',note:'60 sec between supersets \xB7 Short head peak contraction \xB7 Full length-tension arc across the set'}]},
+    {title:'Unilateral Legs \u2014 Quad',items:[{name:'Bulgarian Split Squat',sets:'3 \xD7 8\u201310 / leg @ 50\u201370 lb DBs',note:'90 sec rest \xB7 Submaximal \u2014 legs are pre-fatigued from Saturday \xB7 Progression: add reps before load'}]},
+    {title:'Unilateral Legs \u2014 Posterior Chain',items:[{name:'Single-Leg RDL',sets:'3 \xD7 8\u201310 / leg',note:'90 sec rest \xB7 Light-moderate \xB7 Pattern quality over load \xB7 Progression: do not aggressively progress \u2014 add a 3-sec pause at bottom before adding load'}]},
+    {title:'Glute Isolation',items:[{name:'Hip Thrust or Cable Pull-Through',sets:'3 \xD7 12\u201315',note:'60 sec rest \xB7 Full hip extension, controlled squeeze \xB7 Progression: +5 lb every 2 weeks if form is clean through full ROM'}]},
     {title:'Calves + Golf Finish',items:[{name:'Standing Calf Raise',sets:'3 \xD7 15\u201320',note:'60 sec rest \xB7 Full ROM, slow eccentric'},{name:'Dead Hang',sets:'2 \xD7 20\u201330 sec',note:'Finish session here \xB7 Decompression + grip endurance'}]},
   ]},
 ];
@@ -455,7 +512,6 @@ function render(){
   const day=DAYS.find(d=>d.id===activeDay);
   document.getElementById('tabs').innerHTML=DAYS.map(d=>'<button class="tab" data-day-id="'+d.id+'" style="border-bottom-color:'+(activeDay===d.id?d.accent:'transparent')+';color:'+(activeDay===d.id?d.accent:'var(--text-muted)')+'"><span class="tab-day">'+d.day+'</span>'+d.label+'</button>').join('');
   document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>switchDay(b.dataset.dayId)));
-  document.getElementById('bottomSection').style.display=day.isOff?'none':'block';
   if(day.isOff){renderOffDays(day);return;}
   const secs=day.sections.map((s,si)=>{
     const key=day.id+'-'+si;
@@ -505,7 +561,7 @@ function updateTimerDisplay(){
   arcEl.style.strokeDashoffset=CIRC*(1-pct);
   if(timerState==='running'){
     displayEl.textContent=fmtTime(timerRemaining);
-    arcEl.style.stroke=accent;bubbleEl.style.borderColor=accent+'66';statusEl.textContent='PAUSE';
+    arcEl.style.stroke=accent;bubbleEl.style.borderColor=accent+'66';statusEl.textContent='TAP';
   } else if(timerState==='paused'){
     displayEl.textContent=fmtTime(timerRemaining);
     arcEl.style.stroke='#666';bubbleEl.style.borderColor='var(--border-vis)';statusEl.textContent='RESUME';
@@ -583,13 +639,8 @@ function onBubbleUp(e){
   if(timerState==='idle'){
     startTimer();
   } else if(timerState==='running'){
-    // Pause on tap — show reset panel so Stop/Reset are reachable
-    clearInterval(timerInterval);timerState='paused';
-    timerPanelOpen=true;
-    document.getElementById('timerPanel').classList.add('show');
-    updateTimerDisplay();
+    toggleResetPanel();
   } else if(timerState==='paused'){
-    hidePanelIfOpen();
     startTimer(); // resume
   } else if(timerState==='done'){
     // reset back to idle showing time
@@ -624,6 +675,27 @@ document.getElementById('timerSettingsOverlay').addEventListener('click',e=>{
 document.getElementById('hamburgerBtn').addEventListener('click',openDrawer);
 document.getElementById('drawerCloseBtn').addEventListener('click',closeDrawer);
 document.getElementById('drawerOverlay').addEventListener('click',closeDrawer);
+
+// Strength page
+function openStrengthPage(){closeDrawer();document.getElementById('strengthPage').classList.add('open');}
+function closeStrengthPage(){document.getElementById('strengthPage').classList.remove('open');}
+document.getElementById('openStrengthPageBtn').addEventListener('click',openStrengthPage);
+document.getElementById('strengthPageClose').addEventListener('click',closeStrengthPage);
+
+function openProgPage(){closeDrawer();document.getElementById('progPage').classList.add('open');}
+function closeProgPage(){document.getElementById('progPage').classList.remove('open');}
+document.getElementById('openProgPageBtn').addEventListener('click',openProgPage);
+document.getElementById('progPageClose').addEventListener('click',closeProgPage);
+
+// Escape key — closes drawer, strength page, prog page, or baseline modal
+document.addEventListener('keydown',e=>{
+  if(e.key!=='Escape')return;
+  if(document.getElementById('strengthPage').classList.contains('open')){closeStrengthPage();return;}
+  if(document.getElementById('progPage').classList.contains('open')){closeProgPage();return;}
+  if(document.getElementById('drawer').classList.contains('open')){closeDrawer();return;}
+  if(document.getElementById('baselineModal').classList.contains('open')){closeBaselineModal();return;}
+});
+
 document.getElementById('calcBtn').addEventListener('click',calculate);
 document.getElementById('calcWeight').addEventListener('keyup',e=>{if(e.key==='Enter')calculate();});
 document.getElementById('calcReps').addEventListener('keyup',e=>{if(e.key==='Enter')calculate();});
@@ -646,11 +718,7 @@ window.addEventListener('scroll',()=>{bubbleEl.classList.add('scroll-fade');clea
 
 updateTimerDisplay();renderBaselines();render();
 
-// HIGH CONTRAST
-const hcToggle=document.getElementById('hcToggle');
-function applyHC(on){document.body.classList.toggle('hc',on);hcToggle.checked=on;}
-applyHC(localStorage.getItem('ar7_hc')==='1');
-hcToggle.addEventListener('change',()=>{const on=hcToggle.checked;localStorage.setItem('ar7_hc',on?'1':'0');applyHC(on);});
+
 
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
