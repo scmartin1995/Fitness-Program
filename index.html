@@ -185,6 +185,34 @@
     }
     .timer-bubble.scroll-fade{opacity:0.35;transition:opacity 0.3s ease,border-color var(--t-mid),transform 0.1s;}
     .timer-bubble.scroll-fade:hover,.timer-bubble.scroll-fade:active{opacity:1;}
+
+    /* HIGH CONTRAST MODE */
+    body.hc{
+      --bg:#000; --bg-raised:#000; --bg-card:#0a0a0a; --bg-input:#111;
+      --border-dim:#444; --border-mid:#555; --border-soft:#666; --border-vis:#777;
+      --text-primary:#fff; --text-secondary:#eee; --text-dim:#ccc;
+      --text-muted:#aaa; --text-ghost:#999; --text-faint:#888;
+    }
+    body.hc .section-toggle{background:#0d0d0d;}
+    body.hc .section-toggle:hover{background:#181818;}
+    body.hc .section-label{color:#ddd;}
+    body.hc .item-note{color:#bbb;}
+    body.hc .item-sets{opacity:1;}
+    body.hc .calc-result-label{color:#fff;}
+    body.hc .tabs-wrap{background:#000;}
+    body.hc .tab{color:#999;}
+    body.hc .modal-reset{color:#aaa;}
+    body.hc .modal-reset:hover{color:#fff;}
+
+    /* TOGGLE SWITCH */
+    .hc-row{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;border-bottom:1px solid var(--border-dim);}
+    .hc-label{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--text-muted);font-family:var(--font-mono);}
+    .hc-switch{position:relative;width:40px;height:22px;flex-shrink:0;}
+    .hc-switch input{opacity:0;width:0;height:0;position:absolute;}
+    .hc-track{position:absolute;inset:0;background:var(--bg-input);border:1px solid var(--border-vis);border-radius:11px;cursor:pointer;transition:background var(--t-mid),border-color var(--t-mid);}
+    .hc-track::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:var(--text-ghost);transition:transform var(--t-mid),background var(--t-mid);}
+    .hc-switch input:checked + .hc-track{background:#fff;border-color:#fff;}
+    .hc-switch input:checked + .hc-track::after{transform:translateX(18px);background:#000;}
   </style>
 </head>
 <body>
@@ -195,6 +223,13 @@
   <div class="drawer-header">
     <span class="drawer-title">Program Info</span>
     <button class="drawer-close" id="drawerCloseBtn" aria-label="Close menu">&#x2715;</button>
+  </div>
+  <div class="hc-row">
+    <span class="hc-label">High Contrast</span>
+    <label class="hc-switch" aria-label="Toggle high contrast mode">
+      <input type="checkbox" id="hcToggle" />
+      <span class="hc-track"></span>
+    </label>
   </div>
   <div class="drawer-section">
     <div class="drawer-section-title">Rep Max Calculator</div>
@@ -318,6 +353,7 @@
 'use strict';
 
 const DAYS=[
+  {id:'off',day:'Mon\u2013Wed',label:'OFF DAYS',sub:'Recovery \xB7 Conditioning \xB7 Mobility',accent:'#9B8EE8',duration:'Optional',isOff:true},
   {id:'push',day:'Thursday',label:'PUSH',sub:'Chest \xB7 Shoulders \xB7 Triceps',accent:'#E84B2A',duration:'~70 min',sections:[
     {title:'Warm-Up',items:[{name:'Dip Position Leg Raises',sets:'2 \xD7 10',note:''},{name:'Bodyweight Dips',sets:'2 \xD7 10',note:'Then ramp sets into Bench Press'}]},
     {title:'Primary Strength',items:[{name:'Barbell Bench Press',sets:'4 \xD7 4\u20136 @ 210\u2013215 lb',note:'2\u20133 min rest \xB7 Progress to 220 when hitting 6 across all 4 sets'},{name:'Standing Overhead Press',sets:'3 \xD7 5\u20136 @ 125\u2013130 lb',note:'2 min rest \xB7 Build from 125, earn 130'}]},
@@ -351,7 +387,6 @@ const DAYS=[
     {title:'Glute Isolation',items:[{name:'Hip Thrust or Cable Pull-Through',sets:'3 \xD7 12\u201315',note:'60 sec rest \xB7 Full hip extension, controlled squeeze'}]},
     {title:'Calves + Golf Finish',items:[{name:'Standing Calf Raise',sets:'3 \xD7 15\u201320',note:'60 sec rest \xB7 Full ROM, slow eccentric'},{name:'Dead Hang',sets:'2 \xD7 20\u201330 sec',note:'Finish session here \xB7 Decompression + grip endurance'}]},
   ]},
-  {id:'off',day:'Mon\u2013Wed',label:'OFF DAYS',sub:'Recovery \xB7 Conditioning \xB7 Mobility',accent:'#9B8EE8',duration:'Optional',isOff:true},
 ];
 
 const DEFAULT_BASELINES=[
@@ -362,7 +397,9 @@ const DEFAULT_BASELINES=[
   {id:'cgbench',lift:'Close-Grip Bench', orm:200,pctLow:0.775,pctHigh:0.825},
 ];
 
-let activeDay='push';
+// Map JS day (0=Sun,1=Mon,...,6=Sat) to workout id
+const DAY_MAP=['arms','off','off','off','push','pull','legs'];
+let activeDay=DAY_MAP[new Date().getDay()];
 const openSections={};
 let editingBaselineId=null;
 
@@ -603,6 +640,12 @@ let scrollTimer=null;
 window.addEventListener('scroll',()=>{bubbleEl.classList.add('scroll-fade');clearTimeout(scrollTimer);scrollTimer=setTimeout(()=>bubbleEl.classList.remove('scroll-fade'),800);},{passive:true});
 
 updateTimerDisplay();renderBaselines();render();
+
+// HIGH CONTRAST
+const hcToggle=document.getElementById('hcToggle');
+function applyHC(on){document.body.classList.toggle('hc',on);hcToggle.checked=on;}
+applyHC(localStorage.getItem('ar7_hc')==='1');
+hcToggle.addEventListener('change',()=>{const on=hcToggle.checked;localStorage.setItem('ar7_hc',on?'1':'0');applyHC(on);});
 
 if('serviceWorker' in navigator){
   window.addEventListener('load',()=>{
