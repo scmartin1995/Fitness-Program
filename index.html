@@ -518,6 +518,7 @@ details[open] .section-caret { transform: rotate(180deg); }
 <script>
 (function(){
 'use strict';
+try {
 
 const DAYS = [
   { id:'off', day:'Mon\u2013Wed', label:'OFF DAYS', sub:'Recovery \xB7 Conditioning \xB7 Mobility', accent:'#9B8EE8', duration:'Optional', isOff:true },
@@ -774,6 +775,11 @@ window.addEventListener('scroll',()=>{ bubbleEl.classList.add('scroll-fade'); cl
 updateTimerDisplay(); renderBaselines(); render();
 
 if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('/Fitness-Program/sw.js').catch(()=>{}); }); }
+
+} catch(err) {
+  document.getElementById('content').innerHTML = '<div style="padding:2rem;color:#ff7351;font-family:monospace;font-size:0.875rem"><strong>JS Error:</strong><br>' + err.message + '<br><br>' + err.stack + '</div>';
+  console.error('AR-7 init error:', err);
+}
 })();
 </script>
 </body>
