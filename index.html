@@ -526,7 +526,7 @@ const DAYS = [
     notes:'Focus on controlled eccentrics on Bench. AR-7 block is chest hypertrophy \u2014 keep rest to 15\u201320 sec.',
     sections:[
       { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Dip Position Leg Raises',sets:'2 \xD7 10',note:''},{name:'Bodyweight Dips',sets:'2 \xD7 10',note:'Then ramp sets into Bench Press'}]},
-      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Barbell Bench Press',sets:'4 \xD7 4\u20136 @ {range}',baselineId:'bench',note:'2\u20133 min rest \xB7 Progress when hitting 6 across all 4 sets'},{name:'Standing Overhead Press',sets:'3 \xD7 5\u20136 @ {range}',baselineId:'ohp',note:'2 min rest \xB7 Build from baseline, earn the next load'}]},
+      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Barbell Bench Press',sets:'4 \xD7 4\u20136 @ 210\u2013215 lb',note:'2\u20133 min rest \xB7 Progress to 220 when hitting 6 across all 4 sets'},{name:'Standing Overhead Press',sets:'3 \xD7 5\u20136 @ 125\u2013130 lb',note:'2 min rest \xB7 Build from 125, earn 130'}]},
       { title:'AR-7 Block \u2014 Chest Focus', icon:'diamond', ar7:true, items:[{name:'Action: Incline DB Press',sets:'6\u20138 reps',note:''},{name:'Reaction: DB Fly or Pec Deck',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest'}]},
       { title:'Accessories', icon:'layers', items:[{name:'Dumbbell Lateral Raises',sets:'3 \xD7 12\u201315',note:''}]},
       { title:'Micro Arm Add-On \u2014 Triceps', icon:'layers', items:[{name:'Rope Pushdowns or Overhead Cable Extensions',sets:'3 \xD7 10\u201312',note:'~60 sec rest \xB7 Add reps first, then load \u2014 stop 1\u20132 reps from failure'}]},
@@ -536,7 +536,7 @@ const DAYS = [
     notes:'Prioritize full scapular retraction on rows. Dirty 30s are a supinated-to-neutral-to-hip curl sequence \u2014 no stopping.',
     sections:[
       { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Dip Position Leg Raises',sets:'2 \xD7 10',note:'Then ramp sets into Pull-Ups'}]},
-      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Weighted Pull-Ups or Lat Pulldown',sets:'4 \xD7 5\u20136',note:'2 min rest'},{name:'Barbell Row or Chest-Supported Row',sets:'3 \xD7 5\u20136',note:'2 min rest'}]},
+      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Weighted Pull-Ups or Lat Pulldown',sets:'4 \xD7 5\u20136',note:'2 min rest'},{name:'Barbell Row or Chest-Supported Row',baselineId:'row',sets:'3 \xD7 5\u20136',note:'2 min rest'}]},
       { title:'AR-7 Block \u2014 Back Focus', icon:'diamond', ar7:true, items:[{name:'Action: One-Arm DB Row',sets:'6\u20138 reps / side',note:''},{name:'Reaction: Straight-Arm Pulldown or Band Pullover',sets:'12\u201315 reps',note:'7 rounds \xB7 minimal rest'}]},
       { title:'Accessories', icon:'layers', items:[{name:'Dirty 30s',sets:'3 \xD7 15',note:'Supinated \xD710 \u2192 Neutral \xD710 \u2192 Hip drive neutral \xD710'}]},
       { title:'Micro Arm Add-On \u2014 Biceps', icon:'layers', items:[{name:'Hammer Curl',sets:'3 \xD7 10\u201312',note:'~60 sec rest \xB7 Add reps first, then load slowly \u2014 stop 1\u20132 reps from failure'}]},
@@ -547,7 +547,7 @@ const DAYS = [
     notes:'Hip mobility warm-up is mandatory. Squat is the primary mover; everything else is volume and golf carry-over.',
     sections:[
       { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Feet Elevated Side Crunches',sets:'2 \xD7 5',note:'Neutral push-up \u2192 lateral flexion \u2192 back to neutral'},{name:'90/90 Hip Switches',sets:'2 \xD7 10',note:''},{name:'Hip CARs',sets:'2 \xD7 5 / side',note:'Then ramp sets into Squat'}]},
-      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Back Squat or Safety Bar Squat',sets:'4 \xD7 3\u20135 @ {range}',baselineId:'squat',note:'2\u20133 min rest \xB7 295 is next target'},{name:'Romanian Deadlift',sets:'3 \xD7 5\u20136 @ {range}',baselineId:'rdl',note:'2 min rest \xB7 Pattern over load'}]},
+      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Back Squat or Safety Bar Squat',sets:'4 \xD7 3\u20135 @ 275\u2013285 lb',note:'2\u20133 min rest \xB7 295 is next target'},{name:'Romanian Deadlift',sets:'3 \xD7 5\u20136 @ 185\u2013195 lb',note:'2 min rest \xB7 Pattern over load'}]},
       { title:'AR-7 Block \u2014 Quad Focus', icon:'diamond', ar7:true, items:[{name:'Action: Leg Press or Front Squat',sets:'6\u20138 reps',note:''},{name:'Reaction: Sissy Squats',sets:'10\u201312 reps',note:'7 rounds \xB7 15\u201320 sec rest'}]},
       { title:'Core / Anti-Rotation', icon:'rotate_right', items:[{name:'Hanging Leg Raises or Ab Wheel',sets:'3 \xD7 10\u201312',note:'Alternate weekly with Pallof Press'},{name:'Pallof Press (alternate week)',sets:'3 \xD7 10\u201312 / side',note:'Light-moderate, slow and controlled'}]},
       { title:'Rotational Power', icon:'sports_golf', items:[{name:'Landmine Rotations',sets:'3 \xD7 8\u201310 / side',note:'~60 sec rest \xB7 Pattern training, not strength work \xB7 Load only every 3\u20134 weeks'}]},
@@ -557,11 +557,11 @@ const DAYS = [
     notes:'Arms are pre-fatigued from the week. Unilateral leg work is submaximal by design \u2014 pattern quality, not new PRs.',
     sections:[
       { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Wrist Circles + Forearm Stretch',sets:'2 \xD7 10 each direction',note:''},{name:'Band Pull-Aparts',sets:'2 \xD7 15',note:'Shoulder health primer'},{name:'Cable Rope Pushdown (light)',sets:'1 \xD7 20',note:'Elbow warm-up'},{name:'EZ-Bar Curl (light)',sets:'1 \xD7 15',note:'Then ramp into Close-Grip Bench'}]},
-      { title:'Primary Strength \u2014 Triceps', icon:'fitness_center', items:[{name:'Close-Grip Bench Press',sets:'4 \xD7 5\u20136 @ {range}',baselineId:'cgbench',note:'2 min rest \xB7 Hit 6 across all 4 to earn next load'}]},
+      { title:'Primary Strength \u2014 Triceps', icon:'fitness_center', items:[{name:'Close-Grip Bench Press',sets:'4 \xD7 5\u20136 @ 155\u2013165 lb',note:'2 min rest \xB7 Hit 6 across all 4 to earn next load'}]},
       { title:'Primary Strength \u2014 Biceps', icon:'fitness_center', items:[{name:'EZ-Bar Curl or Barbell Curl',sets:'4 \xD7 6\u20138',note:'90 sec rest \xB7 3 sec eccentric, no body English \xB7 Add reps first (6\u21928), then +2.5 lb'}]},
       { title:'AR-7 Block \u2014 Triceps Focus', icon:'diamond', ar7:true, items:[{name:'Action: Overhead Cable Extension or Skull Crusher',sets:'8\u201310 reps',note:'Long head stretch position'},{name:'Reaction: Rope Pushdown',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest \xB7 Lateral head in shortened position'}]},
       { title:'Superset \u2014 Biceps Hypertrophy', icon:'repeat', items:[{name:'A1: Incline DB Curl',sets:'3 \xD7 10\u201312',note:'Long head stretch'},{name:'A2: Concentration Curl or Spider Curl',sets:'3 \xD7 10\u201312',note:'60 sec between supersets \xB7 Short head peak contraction'}]},
-      { title:'Unilateral Legs \u2014 Quad', icon:'directions_run', items:[{name:'Bulgarian Split Squat',sets:'3 \xD7 8\u201310 / leg @ {range}',baselineId:'bsq',note:'90 sec rest \xB7 Submaximal \u2014 legs pre-fatigued from Saturday \xB7 KB total load per leg'}]},
+      { title:'Unilateral Legs \u2014 Quad', icon:'directions_run', items:[{name:'Bulgarian Split Squat',sets:'3 \xD7 8\u201310 / leg @ 50\u201370 lb DBs',note:'90 sec rest \xB7 Submaximal \u2014 legs pre-fatigued from Saturday'}]},
       { title:'Unilateral Legs \u2014 Posterior Chain', icon:'directions_run', items:[{name:'Single-Leg RDL',sets:'3 \xD7 8\u201310 / leg',note:'90 sec rest \xB7 Light-moderate \xB7 Pattern quality over load'}]},
       { title:'Glute Isolation', icon:'layers', items:[{name:'Hip Thrust or Cable Pull-Through',sets:'3 \xD7 12\u201315',note:'60 sec rest \xB7 Full hip extension, controlled squeeze'}]},
       { title:'Calves + Finisher', icon:'flag', items:[{name:'Standing Calf Raise',sets:'3 \xD7 15\u201320',note:'60 sec rest \xB7 Full ROM, slow eccentric'},{name:'Dead Hang',sets:'2 \xD7 20\u201330 sec',note:'Finish here \xB7 Decompression + grip endurance'}]},
@@ -570,12 +570,12 @@ const DAYS = [
 ];
 
 const DEFAULT_BASELINES = [
-  {id:'bench',   lift:'Bench Press',           orm:254, pctLow:0.827, pctHigh:0.846},
-  {id:'ohp',     lift:'Overhead Press',        orm:163, pctLow:0.767, pctHigh:0.798},
-  {id:'squat',   lift:'Back Squat',            orm:328, pctLow:0.838, pctHigh:0.869},
-  {id:'rdl',     lift:'Romanian Deadlift',     orm:254, pctLow:0.728, pctHigh:0.768},
-  {id:'cgbench', lift:'Close-Grip Bench',      orm:200, pctLow:0.775, pctHigh:0.825},
-  {id:'bsq',     lift:'Bulgarian Split Squat', orm:70,  pctLow:0.857, pctHigh:1.0},
+  {id:'bench',   lift:'Bench Press',       orm:254, pctLow:0.827, pctHigh:0.846},
+  {id:'ohp',     lift:'Overhead Press',    orm:163, pctLow:0.767, pctHigh:0.798},
+  {id:'squat',   lift:'Back Squat',        orm:328, pctLow:0.838, pctHigh:0.869},
+  {id:'rdl',     lift:'Romanian Deadlift', orm:254, pctLow:0.728, pctHigh:0.768},
+  {id:'cgbench', lift:'Close-Grip Bench',  orm:200, pctLow:0.775, pctHigh:0.825},
+  {id:'row',     lift:'Barbell Row',       orm:185, pctLow:0.800, pctHigh:0.870},
 ];
 
 const DAY_MAP = ['arms','off','off','off','push','pull','legs'];
@@ -585,17 +585,8 @@ let editingBaselineId = null;
 
 function calcOrm(w,r){ return r===1?w:Math.round(w*(1+r/30)/2.5)*2.5; }
 function workingRange(orm,lo,hi){ const a=Math.round(orm*lo/2.5)*2.5,b=Math.round(orm*hi/2.5)*2.5; return a===b?a+' lb':a+'\u2013'+b+' lb'; }
-function resolveItemSets(item,baselines){ if(!item.baselineId||!item.sets.includes('{range}')) return item.sets; const b=baselines.find(x=>x.id===item.baselineId); if(!b) return item.sets; return item.sets.replace('{range}',workingRange(b.orm,b.pctLow,b.pctHigh)); }
 function fmtTime(s){ const m=Math.floor(s/60),sec=s%60; return m+':'+(sec<10?'0':'')+sec; }
-function loadBaselines(){
-  try{
-    const s=localStorage.getItem('ar7_baselines');
-    if(!s) return JSON.parse(JSON.stringify(DEFAULT_BASELINES));
-    const data=JSON.parse(s);
-    DEFAULT_BASELINES.forEach(def=>{ if(!data.find(x=>x.id===def.id)) data.push(JSON.parse(JSON.stringify(def))); });
-    return data;
-  }catch(e){ return JSON.parse(JSON.stringify(DEFAULT_BASELINES)); }
-}
+function loadBaselines(){ try{ const s=localStorage.getItem('ar7_baselines'); if(!s) return JSON.parse(JSON.stringify(DEFAULT_BASELINES)); const d=JSON.parse(s); DEFAULT_BASELINES.forEach(def=>{ if(!d.find(x=>x.id===def.id)) d.push(JSON.parse(JSON.stringify(def))); }); return d; }catch(e){ return JSON.parse(JSON.stringify(DEFAULT_BASELINES)); } }
 function saveBaselines(d){ try{ localStorage.setItem('ar7_baselines',JSON.stringify(d)); }catch(e){} }
 
 function renderBaselines(){
@@ -646,12 +637,12 @@ function saveBaseline(){
   if(!w||!r||r<1){ closeBaselineModal(); return; }
   const data=loadBaselines(),b=data.find(x=>x.id===editingBaselineId);
   if(b){ b.orm=calcOrm(w,r); saveBaselines(data); }
-  renderBaselines(); render(); closeBaselineModal();
+  renderBaselines(); closeBaselineModal();
 }
 function resetBaseline(){
   const def=DEFAULT_BASELINES.find(x=>x.id===editingBaselineId),data=loadBaselines(),b=data.find(x=>x.id===editingBaselineId);
   if(b&&def){ b.orm=def.orm; saveBaselines(data); }
-  renderBaselines(); render(); closeBaselineModal();
+  renderBaselines(); closeBaselineModal();
 }
 
 function render(){
@@ -669,7 +660,6 @@ function render(){
 
   const notesHtml=day.notes?`<div class="notes-banner"><span class="mi mi-fill notes-banner-icon">lightbulb</span><div class="notes-label">Session Notes</div><p class="notes-text">${day.notes}</p></div>`:'';
 
-  const currentBaselines=loadBaselines();
   const sectionsHtml=day.sections.map((s,si)=>{
     const key=day.id+'-'+si;
     if(!(key in openSections)) openSections[key]=si<3;
@@ -678,7 +668,8 @@ function render(){
     const iconStyle=isAr7?`color:${day.accent};font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24`:'color:#adaaaa';
     const titleStyle=isAr7?`style="color:${day.accent}"`:'';
     const borderStyle=isAr7?`style="border-left-color:${day.accent}"`:'';
-    const itemsHtml=s.items.map(item=>`<div class="section-item"><div class="section-item-left"><div class="section-item-name">${item.name}</div>${item.note?`<div class="section-item-note">${item.note}</div>`:''}</div><span class="section-item-sets" style="color:${day.accent}">${resolveItemSets(item,currentBaselines)}</span></div>`).join('');
+    const baselines=loadBaselines();
+    const itemsHtml=s.items.map(item=>{ const b=item.baselineId?baselines.find(x=>x.id===item.baselineId):null; const setsStr=b?item.sets+' @ '+workingRange(b.orm,b.pctLow,b.pctHigh):item.sets; return `<div class="section-item"><div class="section-item-left"><div class="section-item-name">${item.name}</div>${item.note?`<div class="section-item-note">${item.note}</div>`:''}</div><span class="section-item-sets" style="color:${day.accent}">${setsStr}</span></div>`; }).join('');
     return `<details class="section-accordion${isAr7?' ar7':''}" ${isOpen?'open':''} ${borderStyle}><summary class="section-summary" data-key="${key}" onclick="toggleSection('${key}',event)"><div class="section-summary-left"><span class="mi" style="${iconStyle}">${s.icon||'layers'}</span><span class="section-title" ${titleStyle}>${s.title}</span></div><span class="mi section-caret">expand_more</span></summary><div class="section-body">${itemsHtml}</div></details>`;
   }).join('');
 
