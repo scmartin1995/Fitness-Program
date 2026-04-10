@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ar7-2.3';
+const CACHE_NAME = 'ar7-v8';
 const SHELL = [
   '/Fitness-Program/',
   '/Fitness-Program/index.html',
