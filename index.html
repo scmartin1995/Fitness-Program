@@ -1350,6 +1350,24 @@ window.dismissDeload = function(dayType) { dismissNudge(dayType); };
 function calcOrm(w,r){ return r===1?w:Math.round(w*(1+r/30)/2.5)*2.5; }
 function workingRange(orm,lo,hi){ const a=Math.round(orm*lo/2.5)*2.5,b=Math.round(orm*hi/2.5)*2.5; return a===b?a+' lb':a+'\u2013'+b+' lb'; }
 function fmtTime(s){ const m=Math.floor(s/60),sec=s%60; return m+':'+(sec<10?'0':'')+sec; }
+let audioCtx=null;
+function playChime(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    const now=audioCtx.currentTime;
+    [880,1175,1568].forEach((freq,i)=>{
+      const osc=audioCtx.createOscillator(),gain=audioCtx.createGain();
+      osc.type='sine'; osc.frequency.value=freq;
+      const start=now+i*0.18;
+      gain.gain.setValueAtTime(0,start);
+      gain.gain.linearRampToValueAtTime(0.25,start+0.02);
+      gain.gain.exponentialRampToValueAtTime(0.001,start+0.35);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(start); osc.stop(start+0.4);
+    });
+  }catch(e){}
+}
 function loadBaselines(){ try{ const s=localStorage.getItem('ar7_baselines'); if(!s) return JSON.parse(JSON.stringify(DEFAULT_BASELINES)); const d=JSON.parse(s); DEFAULT_BASELINES.forEach(def=>{ if(!d.find(x=>x.id===def.id)) d.push(JSON.parse(JSON.stringify(def))); }); return d; }catch(e){ return JSON.parse(JSON.stringify(DEFAULT_BASELINES)); } }
 function saveBaselines(d){ try{ localStorage.setItem('ar7_baselines',JSON.stringify(d)); }catch(e){} }
 
@@ -1521,7 +1539,8 @@ function updateTimerDisplay(){
 function startTimer(){
   if(timerRemaining<=0) timerRemaining=timerTotal;
   timerState='running';
-  timerInterval=setInterval(()=>{ timerRemaining--; if(timerRemaining<=0){ clearInterval(timerInterval); timerRemaining=0; timerState='done'; if(navigator.vibrate)navigator.vibrate([200,100,200]); hidePanelIfOpen(); } updateTimerDisplay(); },1000);
+  try{ if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); }catch(e){}
+  timerInterval=setInterval(()=>{ timerRemaining--; if(timerRemaining<=0){ clearInterval(timerInterval); timerRemaining=0; timerState='done'; if(navigator.vibrate)navigator.vibrate([200,100,200]); playChime(); hidePanelIfOpen(); } updateTimerDisplay(); },1000);
   updateTimerDisplay();
 }
 function resetTimer(){ clearInterval(timerInterval); timerState='idle'; timerRemaining=timerTotal; hidePanelIfOpen(); updateTimerDisplay(); }
@@ -1533,7 +1552,7 @@ function onBubbleDown(){ holdFired=false; holdTimeout=setTimeout(()=>{ holdFired
 function onBubbleUp(){ clearTimeout(holdTimeout); if(holdFired) return; if(timerState==='idle') startTimer(); else if(timerState==='running'){ timerPanelOpen=!timerPanelOpen; document.getElementById('timerPanel').classList.toggle('show',timerPanelOpen); } else if(timerState==='paused') startTimer(); else if(timerState==='done'){ timerRemaining=timerTotal; timerState='idle'; updateTimerDisplay(); } }
 function onBubbleLeave(){ clearTimeout(holdTimeout); }
 bubbleEl.addEventListener('mousedown',onBubbleDown); bubbleEl.addEventListener('mouseup',onBubbleUp); bubbleEl.addEventListener('mouseleave',onBubbleLeave);
-bubbleEl.addEventListener('touchstart',onBubbleDown,{passive:true}); bubbleEl.addEventListener('touchend',onBubbleUp); bubbleEl.addEventListener('touchcancel',onBubbleLeave);
+bubbleEl.addEventListener('touchstart',onBubbleDown,{passive:true}); bubbleEl.addEventListener('touchend',e=>{ e.preventDefault(); onBubbleUp(); }); bubbleEl.addEventListener('touchcancel',onBubbleLeave);
 function openTimerSettings(){ document.getElementById('timerSettingsOverlay').classList.add('open'); }
 function closeTimerSettings(){ document.getElementById('timerSettingsOverlay').classList.remove('open'); }
 document.getElementById('timerSettingsGrid').addEventListener('click',e=>{ const btn=e.target.closest('.timer-preset'); if(btn){ setTimer(parseInt(btn.dataset.seconds)); closeTimerSettings(); } });
