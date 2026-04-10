@@ -39,7 +39,8 @@
 
 /* ── RESET ────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: var(--c-surface); color: var(--c-on-surface); font-family: var(--font-b); min-height: 100dvh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+body { background: var(--c-surface); color: var(--c-on-surface); font-family: var(--font-b); min-height: 100dvh; overflow-x: hidden; -webkit-font-smoothing: antialiased; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+input, textarea { -webkit-user-select: text; user-select: text; }
 button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
 input { font-family: inherit; }
 ul, li { list-style: none; }
@@ -67,7 +68,7 @@ details > summary::-webkit-details-marker { display: none; }
 
 /* ── TAB BAR ──────────────────────────────────────────── */
 .tabbar-wrap {
-  position: fixed; top: 68px; left: 0; right: 0; z-index: 40;
+  position: fixed; top: 57px; left: 0; right: 0; z-index: 40;
   background: rgba(10,10,10,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(38,38,38,0.2);
 }
@@ -84,7 +85,7 @@ details > summary::-webkit-details-marker { display: none; }
 .tab-day { font-size: 0.5625rem; opacity: 0.6; }
 
 /* ── MAIN CONTENT ─────────────────────────────────────── */
-.main-content { padding: 120px 1rem 8rem; max-width: 42rem; margin: 0 auto; }
+.main-content { padding: 110px 1rem 8rem; max-width: 42rem; margin: 0 auto; }
 
 /* ── SLIDE PAGES ──────────────────────────────────────── */
 .slide-page { position: fixed; inset: 0; background: var(--c-surface); z-index: 200; transform: translateX(100%); transition: transform 0.25s ease; overflow-y: auto; }
@@ -104,7 +105,7 @@ details > summary::-webkit-details-marker { display: none; }
 
 /* ── BOTTOM NAV ───────────────────────────────────────── */
 .bottomnav {
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 250;
   display: flex; justify-content: space-around; align-items: flex-end;
   padding: 8px 16px calc(24px + var(--safe-b));
   background: rgba(10,10,10,0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
@@ -112,11 +113,12 @@ details > summary::-webkit-details-marker { display: none; }
   box-shadow: 0 -4px 24px rgba(0,0,0,0.4);
   border-radius: 2rem 2rem 0 0;
 }
-.nav-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; color: #737373; font-family: var(--font-b); font-size: 0.625rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; transition: color 0.2s, transform 0.2s; background: none; border: none; cursor: pointer; }
+.nav-btn { display: flex; flex-direction: column; align-items: center; gap: 2px; color: #737373; font-family: var(--font-b); font-size: 0.625rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.2em; transition: color 0.2s, transform 0.2s; background: none; border: none; cursor: pointer; padding: 0; }
 .nav-btn:hover { color: #f3ffca; }
+.nav-btn.active { color: #cafd00; }
+.nav-btn.active .mi { font-variation-settings: 'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24; background: #cafd00; color: #000; border-radius: 9999px; width: 3rem; height: 3rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(202,253,0,0.4); margin-bottom: 4px; }
+.nav-btn.active .nav-btn-label { display: none; }
 .nav-btn:active { transform: scale(0.9); }
-.nav-btn-pill { background: #cafd00; color: #000; border-radius: 9999px; width: 3rem; height: 3rem; margin-bottom: 4px; box-shadow: 0 0 15px rgba(202,253,0,0.4); display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; transition: transform 0.2s; }
-.nav-btn-pill:active { transform: scale(0.9); }
 
 /* ── MODAL ────────────────────────────────────────────── */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 300; display: flex; align-items: center; justify-content: center; padding: 24px; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
@@ -319,7 +321,7 @@ details[open] .section-caret { transform: rotate(180deg); }
 
 /* ── SESSION MODE BANNER ─────────────────────────────── */
 body.session-active .main-content { padding-bottom: 10rem; }
-.session-mode-banner { position: sticky; top: 120px; z-index: 30; background: rgba(14,14,14,0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(202,253,0,0.35); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.session-mode-banner { position: sticky; top: 110px; z-index: 30; background: rgba(14,14,14,0.96); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(202,253,0,0.35); border-radius: 14px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .sm-left { display: flex; align-items: center; gap: 12px; }
 .sm-pulse { width: 10px; height: 10px; border-radius: 50%; background: var(--c-primary-ctr); box-shadow: 0 0 12px var(--c-primary-ctr); animation: smPulse 2s infinite; }
 @keyframes smPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
@@ -709,10 +711,10 @@ body.session-active .bottomnav { display: none; }
 
 <!-- BOTTOM NAV -->
 <nav class="bottomnav">
-  <button id="navWorkout" class="nav-btn-pill"><span class="mi mi-fill">fitness_center</span></button>
-  <button id="navHistory" class="nav-btn"><span class="mi">history</span><span>History</span></button>
-  <button id="navTools" class="nav-btn"><span class="mi">calculate</span><span>Tools</span></button>
-  <button id="navNotes" class="nav-btn"><span class="mi">description</span><span>Program</span></button>
+  <button id="navWorkout" class="nav-btn"><span class="mi">fitness_center</span><span class="nav-btn-label">Workout</span></button>
+  <button id="navHistory" class="nav-btn"><span class="mi">history</span><span class="nav-btn-label">History</span></button>
+  <button id="navTools" class="nav-btn"><span class="mi">calculate</span><span class="nav-btn-label">Tools</span></button>
+  <button id="navNotes" class="nav-btn"><span class="mi">description</span><span class="nav-btn-label">Program</span></button>
 </nav>
 
 <script>
@@ -1280,10 +1282,12 @@ window.saveFeelDraft = function(recordId) {
 
 // ── RENDER: HISTORY ────────────────────────────────────
 function showHistoryPage() {
+  closeStrengthPage(); closeProgPage();
   renderHistoryPage();
   document.getElementById('historyPage').classList.add('open');
+  setActiveNav('navHistory');
 }
-function closeHistoryPage() { document.getElementById('historyPage').classList.remove('open'); }
+function closeHistoryPage() { document.getElementById('historyPage').classList.remove('open'); setActiveNav(null); }
 function renderHistoryPage() {
   const el = document.getElementById('historyContent');
   const all = getAllSessions();
@@ -1504,10 +1508,11 @@ function switchDay(id){
 window.startSession = startSession;
 window.discardSession = discardSession;
 window.showHistoryPage = showHistoryPage;
-function openStrengthPage(){ document.getElementById('strengthPage').classList.add('open'); }
-function closeStrengthPage(){ document.getElementById('strengthPage').classList.remove('open'); }
-function openProgPage(){ document.getElementById('progPage').classList.add('open'); }
-function closeProgPage(){ document.getElementById('progPage').classList.remove('open'); }
+function setActiveNav(id){ const target=id||'navWorkout'; ['navWorkout','navHistory','navTools','navNotes'].forEach(n=>document.getElementById(n).classList.toggle('active',n===target)); }
+function openStrengthPage(){ closeProgPage(); closeHistoryPage(); document.getElementById('strengthPage').classList.add('open'); setActiveNav('navTools'); }
+function closeStrengthPage(){ document.getElementById('strengthPage').classList.remove('open'); setActiveNav(null); }
+function openProgPage(){ closeStrengthPage(); closeHistoryPage(); document.getElementById('progPage').classList.add('open'); setActiveNav('navNotes'); }
+function closeProgPage(){ document.getElementById('progPage').classList.remove('open'); setActiveNav(null); }
 
 function calculate(){
   const w=parseFloat(document.getElementById('calcWeight').value),r=parseInt(document.getElementById('calcReps').value);
@@ -1613,7 +1618,7 @@ document.addEventListener('keydown',e=>{
 let scrollTimer=null;
 window.addEventListener('scroll',()=>{ bubbleEl.classList.add('scroll-fade'); clearTimeout(scrollTimer); scrollTimer=setTimeout(()=>bubbleEl.classList.remove('scroll-fade'),800); },{passive:true});
 
-updateTimerDisplay(); renderBaselines(); render();
+updateTimerDisplay(); renderBaselines(); render(); setActiveNav();
 
 // Draft resume check on launch
 (function checkDraftOnLaunch(){
