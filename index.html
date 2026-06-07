@@ -724,57 +724,61 @@ try {
 
 const DAYS = [
   { id:'off', day:'Mon\u2013Wed', label:'OFF DAYS', sub:'Recovery \xB7 Conditioning \xB7 Mobility', accent:'#9B8EE8', duration:'Optional', isOff:true },
-  { id:'push', day:'Thursday', label:'PUSH', sub:'Chest \xB7 Shoulders \xB7 Triceps', accent:'#cafd00', duration:'~65 min',
+  { id:'push', day:'Thursday', label:'PUSH', sub:'Chest \xB7 Shoulders \xB7 Triceps', accent:'#cafd00', duration:'~70 min',
     notes:'Focus on controlled eccentrics on Bench. AR-7 block is chest hypertrophy \u2014 keep rest to 15\u201320 sec.',
     sections:[
-      { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Band Pull-Aparts',sets:'2 \xD7 15',note:'Frontal plane \xB7 Scapular retraction \xB7 Rear delt counterbalance before pressing'},{name:'DB External Rotation (side-lying)',sets:'2 \xD7 10 / side',note:'Transverse plane \xB7 Elbow pinned at 90\xB0 \xB7 Light load \xB7 Rotator cuff activation \xB7 Pressing involves hidden shoulder rotation \u2014 this preps it'},{name:'Bodyweight Dips',sets:'2 \xD7 10',note:'Sagittal push primer \xB7 Then ramp sets into Bench Press'}]},
+      { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Dip Position Leg Raises',sets:'2 \xD7 10',note:''},{name:'Bodyweight Dips',sets:'2 \xD7 10',note:'Then ramp sets into Bench Press'}]},
       { title:'Primary Strength', icon:'fitness_center', items:[{name:'Barbell Bench Press',sets:'4 \xD7 4\u20136 @ 210\u2013215 lb',note:'2\u20133 min rest \xB7 Progress to 220 when hitting 6 across all 4 sets'},{name:'Standing Overhead Press',sets:'3 \xD7 5\u20136 @ 125\u2013130 lb',note:'2 min rest \xB7 Build from 125, earn 130'}]},
       { title:'AR-7 Block \u2014 Chest Focus', icon:'diamond', ar7:true, items:[{name:'Action: Incline DB Press',sets:'6\u20138 reps',note:''},{name:'Reaction: DB Fly or Pec Deck',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest'}]},
-      { title:'Accessories', icon:'layers', items:[{name:'Cable Lateral Raises (low pulley)',sets:'3 \xD7 12\u201315',note:'Cable across body \xB7 Maintains tension through full arc \xB7 No dumbbell momentum'}]},
+      { title:'Accessories', icon:'layers', items:[{name:'Dumbbell Lateral Raises',sets:'3 \xD7 12\u201315',note:''}]},
       { title:'Micro Arm Add-On \u2014 Triceps', icon:'layers', items:[{name:'Rope Pushdowns or Overhead Cable Extensions',sets:'3 \xD7 10\u201312',note:'~60 sec rest \xB7 Add reps first, then load \u2014 stop 1\u20132 reps from failure'}]},
     ]
   },
   { id:'pull', day:'Friday', label:'PULL', sub:'Back \xB7 Rear Delts \xB7 Biceps', accent:'#00e3fd', duration:'~75 min',
-    notes:'Prioritize full scapular retraction on rows. Dirty 30s are a rear delt movement \u2014 supinated-to-neutral-to-hip curl sequence, no stopping.',
+    notes:'Prioritize full scapular retraction on rows. Dirty 30s are a supinated-to-neutral-to-hip curl sequence \u2014 no stopping.',
     sections:[
-      { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Dead Hang',sets:'2 \xD7 20\u201330 sec',note:'Sagittal \xB7 Lat in fully lengthened position \xB7 Direct pulling prep \xB7 Spinal decompression'},{name:'Prone Y Raises',sets:'2 \xD7 10',note:'Frontal plane \xB7 Lower trap and scapular upward rotation \xB7 Bodyweight only'},{name:'Prone T Raises',sets:'2 \xD7 10',note:'Transverse plane \xB7 Rear delt and external rotators \xB7 Then ramp sets into Pull-Ups'}]},
-      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Weighted Pull-Ups or Lat Pulldown',sets:'4 \xD7 5\u20136',note:'2 min rest'},{name:'Barbell Row or Chest-Supported Row',baselineId:'row',sets:'3 \xD7 5\u20136',note:'2 min rest'}]},
-      { title:'AR-7 Block \u2014 Back Focus', icon:'diamond', ar7:true, items:[{name:'Action: Single-Arm Cable Row',sets:'6\u20138 reps / side',note:'Constant tension through full ROM \xB7 Load maintained at full arm extension \xB7 Same stack as Lat Pulldown \xB7 No transition'},{name:'Reaction: Straight-Arm Pulldown or Band Pullover',sets:'12\u201315 reps',note:'7 rounds \xB7 minimal rest'}]},
-      { title:'Accessories \u2014 Rear Delts', icon:'layers', items:[{name:'Dirty 30s',sets:'3 \xD7 15',note:'Supinated \xD710 \u2192 Neutral \xD710 \u2192 Hip drive neutral \xD710 \xB7 Rear delt tri-position protocol'}]},
+      { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Dip Position Leg Raises',sets:'2 \xD7 10',note:'Then ramp sets into Pull-Ups'}]},
+      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Conventional Deadlift',baselineId:'deadlift',sets:'3 \xD7 3\u20135',note:'3 min rest \xB7 Lead lift \xB7 Full recovery between sets'},{name:'Weighted Pull-Ups or Lat Pulldown',sets:'3 \xD7 5\u20136',note:'2 min rest'},{name:'Chest-Supported DB or Machine Row',baselineId:'csrow',sets:'3 \xD7 6\u20138',note:'2 min rest \xB7 Lumbar demand removed after deadlift'}]},
+      { title:'AR-7 Block \u2014 Back Focus', icon:'diamond', ar7:true, items:[{name:'Action: One-Arm DB Row',sets:'6\u20138 reps / side',note:''},{name:'Reaction: Straight-Arm Pulldown or Band Pullover',sets:'12\u201315 reps',note:'7 rounds \xB7 minimal rest'}]},
+      { title:'Accessories', icon:'layers', items:[{name:'Dirty 30s',sets:'3 \xD7 15',note:'Supinated \xD710 \u2192 Neutral \xD710 \u2192 Hip drive neutral \xD710'}]},
       { title:'Micro Arm Add-On \u2014 Biceps', icon:'layers', items:[{name:'Hammer Curl',sets:'3 \xD7 10\u201312',note:'~60 sec rest \xB7 Add reps first, then load slowly \u2014 stop 1\u20132 reps from failure'}]},
-      { title:'Finisher', icon:'flag', items:[{name:'Farmer Carries',sets:'2 \xD7 30\u201340m',note:'Week A \xB7 ~60 sec rest \xB7 Distance before load'},{name:'Landmine Rotations',sets:'3 \xD7 8\u201310 / side',note:'Week B \xB7 ~60 sec rest \xB7 Velocity-based \xB7 Hip-to-shoulder sequence \xB7 Load only every 3\u20134 weeks'}]},
+      { title:'Finisher', icon:'flag', items:[{name:'Farmer Carries or Dead Hangs',sets:'2 \xD7 30\u201340m / 2 \xD7 20\u201330 sec',note:'~60 sec rest \xB7 Distance before load'}]},
     ]
   },
-  { id:'legs', day:'Saturday', label:'LEGS', sub:'Quads \xB7 Hamstrings \xB7 Glutes \xB7 Core', accent:'#cafd00', duration:'~68 min',
-    notes:'Hip mobility warm-up is mandatory. Squat is the primary mover. RDL covers hip extension; seated leg curl covers knee flexion \u2014 both hamstring functions trained every session.',
+  { id:'legs', day:'Saturday', label:'LEGS', sub:'Quads \xB7 Hamstrings \xB7 Glutes \xB7 Core', accent:'#cafd00', duration:'~80 min',
+    notes:'Hip mobility warm-up is mandatory. Squat is the primary mover; everything else is volume and golf carry-over.',
     sections:[
-      { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Feet Elevated Side Crunches',sets:'2 \xD7 5',note:'Neutral push-up \u2192 lateral flexion \u2192 back to neutral'},{name:'90/90 Hip Switches',sets:'2 \xD7 10',note:''},{name:'Hip CARs',sets:'2 \xD7 5 / side',note:''},{name:'Pallof Press',sets:'2 \xD7 10 / side',note:'Anti-rotation activation \xB7 Light-moderate \xB7 Then ramp sets into Squat'}]},
-      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Back Squat or Safety Bar Squat',sets:'4 \xD7 3\u20135 @ 275\u2013285 lb',note:'2\u20133 min rest \xB7 295 is next target'},{name:'Romanian Deadlift',sets:'3 \xD7 5\u20136 @ 185\u2013195 lb',note:'2 min rest \xB7 Pattern over load \xB7 Hamstring hip extension'}]},
-      { title:'AR-7 Block \u2014 Quad Focus', icon:'diamond', ar7:true, items:[{name:'Action: Goblet Squat',sets:'6\u20138 reps',note:'Quad lengthened position \xB7 Upright torso \xB7 Load secondary to depth and control'},{name:'Reaction: Leg Extension',sets:'10\u201312 reps',note:'7 rounds \xB7 15\u201320 sec rest \xB7 Quad shortened position \xB7 Cam machine matches strength curve'}]},
-      { title:'Hamstring Isolation', icon:'layers', items:[{name:'Seated Leg Curl',sets:'3 \xD7 10\u201312',note:'60 sec rest \xB7 Hip flexed = hamstring fully lengthened before curl \xB7 Knee flexion pattern \xB7 Pairs with RDL hip extension for complete hamstring coverage'}]},
-      { title:'Glute Isolation', icon:'layers', items:[{name:'Hip Thrust or Cable Pull-Through',sets:'3 \xD7 12\u201315',note:'60 sec rest \xB7 Glute shortened position \xB7 Pairs with RDL lengthened position for full strength curve coverage'}]},
+      { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Feet Elevated Side Crunches',sets:'2 \xD7 5',note:'Neutral push-up \u2192 lateral flexion \u2192 back to neutral'},{name:'90/90 Hip Switches',sets:'2 \xD7 10',note:''},{name:'Hip CARs',sets:'2 \xD7 5 / side',note:'Then ramp sets into Squat'}]},
+      { title:'Primary Strength', icon:'fitness_center', items:[{name:'Back Squat or Safety Bar Squat',sets:'4 \xD7 3\u20135 @ 275\u2013285 lb',note:'2\u20133 min rest \xB7 295 is next target'},{name:'Romanian Deadlift',sets:'3 \xD7 5\u20136 @ 185\u2013195 lb',note:'2 min rest \xB7 Pattern over load'}]},
+      { title:'AR-7 Block \u2014 Quad Focus', icon:'diamond', ar7:true, items:[{name:'Action: Leg Press or Front Squat',sets:'6\u20138 reps',note:''},{name:'Reaction: Sissy Squats',sets:'10\u201312 reps',note:'7 rounds \xB7 15\u201320 sec rest'}]},
+      { title:'Core / Anti-Rotation', icon:'rotate_right', items:[{name:'Hanging Leg Raises or Ab Wheel',sets:'3 \xD7 10\u201312',note:'Alternate weekly with Pallof Press'},{name:'Pallof Press (alternate week)',sets:'3 \xD7 10\u201312 / side',note:'Light-moderate, slow and controlled'}]},
+      { title:'Rotational Power', icon:'sports_golf', items:[{name:'Landmine Rotations',sets:'3 \xD7 8\u201310 / side',note:'~60 sec rest \xB7 Pattern training, not strength work \xB7 Load only every 3\u20134 weeks'}]},
     ]
   },
-  { id:'arms', day:'Sunday', label:'ARMS + LEGS', sub:'Biceps \xB7 Triceps \xB7 Unilateral Legs', accent:'#fce047', duration:'~69 min',
-    notes:'Arms are pre-fatigued from the week. BSS is submaximal by design \u2014 pattern quality, not new PRs. Hip work lives on Saturday.',
+  { id:'arms', day:'Sunday', label:'ARMS + LEGS', sub:'Biceps \xB7 Triceps \xB7 Unilateral Legs \xB7 Glutes', accent:'#fce047', duration:'~70 min',
+    notes:'Arms are pre-fatigued from the week. Unilateral leg work is submaximal by design \u2014 pattern quality, not new PRs.',
     sections:[
       { title:'Warm-Up', icon:'auto_awesome', items:[{name:'Wrist Circles + Forearm Stretch',sets:'2 \xD7 10 each direction',note:''},{name:'Band Pull-Aparts',sets:'2 \xD7 15',note:'Shoulder health primer'},{name:'Cable Rope Pushdown (light)',sets:'1 \xD7 20',note:'Elbow warm-up'},{name:'EZ-Bar Curl (light)',sets:'1 \xD7 15',note:'Then ramp into Close-Grip Bench'}]},
       { title:'Primary Strength \u2014 Triceps', icon:'fitness_center', items:[{name:'Close-Grip Bench Press',sets:'4 \xD7 5\u20136 @ 155\u2013165 lb',note:'2 min rest \xB7 Hit 6 across all 4 to earn next load'}]},
       { title:'Primary Strength \u2014 Biceps', icon:'fitness_center', items:[{name:'EZ-Bar Curl or Barbell Curl',sets:'4 \xD7 6\u20138',note:'90 sec rest \xB7 3 sec eccentric, no body English \xB7 Add reps first (6\u21928), then +2.5 lb'}]},
-      { title:'AR-7 Block \u2014 Triceps Focus', icon:'diamond', ar7:true, items:[{name:'Action: Overhead Cable Extension',sets:'8\u201310 reps',note:'Long head stretch position \xB7 Default to cable; skull crusher if cables unavailable'},{name:'Reaction: Rope Pushdown',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest \xB7 Lateral head in shortened position'}]},
-      { title:'Superset \u2014 Biceps Hypertrophy', icon:'repeat', items:[{name:'A1: Incline DB Curl',sets:'3 \xD7 10\u201312',note:'Long head \xB7 Lengthened position'},{name:'A2: Concentration Curl or Spider Curl',sets:'3 \xD7 10\u201312',note:'60 sec between supersets \xB7 Short head peak contraction'}]},
+      { title:'AR-7 Block \u2014 Triceps Focus', icon:'diamond', ar7:true, items:[{name:'Action: Overhead Cable Extension or Skull Crusher',sets:'8\u201310 reps',note:'Long head stretch position'},{name:'Reaction: Rope Pushdown',sets:'12\u201315 reps',note:'7 rounds \xB7 15\u201320 sec rest \xB7 Lateral head in shortened position'}]},
+      { title:'Superset \u2014 Biceps Hypertrophy', icon:'repeat', items:[{name:'A1: Incline DB Curl',sets:'3 \xD7 10\u201312',note:'Long head stretch'},{name:'A2: Concentration Curl or Spider Curl',sets:'3 \xD7 10\u201312',note:'60 sec between supersets \xB7 Short head peak contraction'}]},
       { title:'Unilateral Legs \u2014 Quad', icon:'directions_run', items:[{name:'Bulgarian Split Squat',sets:'3 \xD7 8\u201310 / leg @ 50\u201370 lb DBs',note:'90 sec rest \xB7 Submaximal \u2014 legs pre-fatigued from Saturday'}]},
+      { title:'Unilateral Legs \u2014 Posterior Chain', icon:'directions_run', items:[{name:'Single-Leg RDL',sets:'3 \xD7 8\u201310 / leg',note:'90 sec rest \xB7 Light-moderate \xB7 Pattern quality over load'}]},
+      { title:'Glute Isolation', icon:'layers', items:[{name:'Hip Thrust or Cable Pull-Through',sets:'3 \xD7 12\u201315',note:'60 sec rest \xB7 Full hip extension, controlled squeeze'}]},
+      { title:'Calves + Finisher', icon:'flag', items:[{name:'Standing Calf Raise',sets:'3 \xD7 15\u201320',note:'60 sec rest \xB7 Full ROM, slow eccentric'},{name:'Dead Hang',sets:'2 \xD7 20\u201330 sec',note:'Finish here \xB7 Decompression + grip endurance'}]},
     ]
   },
 ];
 
 const DEFAULT_BASELINES = [
-  {id:'bench',   lift:'Bench Press',       orm:254, pctLow:0.827, pctHigh:0.846},
-  {id:'ohp',     lift:'Overhead Press',    orm:163, pctLow:0.767, pctHigh:0.798},
-  {id:'squat',   lift:'Back Squat',        orm:328, pctLow:0.838, pctHigh:0.869},
-  {id:'rdl',     lift:'Romanian Deadlift', orm:254, pctLow:0.728, pctHigh:0.768},
-  {id:'cgbench', lift:'Close-Grip Bench',  orm:200, pctLow:0.775, pctHigh:0.825},
-  {id:'row',     lift:'Barbell Row',       orm:185, pctLow:0.800, pctHigh:0.870},
+  {id:'bench',   lift:'Bench Press',             orm:254, pctLow:0.827, pctHigh:0.846},
+  {id:'ohp',     lift:'Overhead Press',          orm:163, pctLow:0.767, pctHigh:0.798},
+  {id:'squat',   lift:'Back Squat',              orm:328, pctLow:0.838, pctHigh:0.869},
+  {id:'rdl',     lift:'Romanian Deadlift',       orm:254, pctLow:0.728, pctHigh:0.768},
+  {id:'cgbench', lift:'Close-Grip Bench',        orm:200, pctLow:0.775, pctHigh:0.825},
+  {id:'deadlift',lift:'Conventional Deadlift',   orm:365, pctLow:0.820, pctHigh:0.870},
+  {id:'csrow',   lift:'Chest-Supported Row',     orm:185, pctLow:0.720, pctHigh:0.780},
 ];
 
 const DAY_MAP = ['arms','off','off','off','push','pull','legs'];
