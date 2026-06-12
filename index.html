@@ -420,10 +420,12 @@ body.session-active .bottomnav { display: none; }
 .sparkline-wrap { height: 56px; margin: 4px 0 12px; }
 .sparkline-svg { width: 100%; height: 100%; display: block; }
 .day-card-sessions { display: flex; flex-direction: column; gap: 2px; border-top: 1px solid rgba(72,72,71,0.15); padding-top: 10px; }
-.session-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
-.session-row-date { font-family: var(--font-b); font-size: 0.75rem; color: var(--c-on-surface-v); }
+.session-row { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; gap: 8px; }
+.session-row-date { font-family: var(--font-b); font-size: 0.75rem; color: var(--c-on-surface-v); flex: 1; }
 .session-row-date.today { color: var(--c-primary); font-weight: 600; }
 .session-row-score { font-family: var(--font-h); font-weight: 800; font-size: 0.875rem; color: var(--c-on-surface); }
+.session-row-edit { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--c-surface-ctr); color: var(--c-on-surface-v); flex-shrink: 0; transition: color 0.2s, background 0.2s; border: none; cursor: pointer; }
+.session-row-edit:hover { color: var(--c-secondary); background: var(--c-surface-top); }
 .history-empty { text-align: center; padding: 48px 24px; color: var(--c-on-surface-v); }
 .history-empty .mi { font-size: 48px; opacity: 0.3; margin-bottom: 12px; }
 .history-empty-text { font-size: 0.875rem; line-height: 1.5; }
@@ -1036,9 +1038,9 @@ function finishSession() {
   if (!session) return;
   const scores = computeScore(session);
   const record = {
-    id: 'sess-' + Date.now(),
+    id: session.isEditing ? session.editId : 'sess-' + Date.now(),
     dayType: session.dayType,
-    date: new Date().toISOString(),
+    date: session.isEditing ? session.editDate : new Date().toISOString(),
     durationSec: Math.floor((Date.now() - session.startTime) / 1000),
     primaries: session.primaries,
     ar7: session.ar7,
@@ -1046,7 +1048,14 @@ function finishSession() {
     feel: session.feel,
     score: scores,
   };
-  addSessionRecord(record);
+  if (session.isEditing) {
+    const all = getAllSessions();
+    const idx = all.findIndex(s => s.id === session.editId);
+    if (idx >= 0) all[idx] = record; else all.push(record);
+    saveAllSessions(all);
+  } else {
+    addSessionRecord(record);
+  }
   clearDraft();
   stopSessionClock();
   session = null;
@@ -1057,7 +1066,32 @@ function finishSession() {
   showSummary(record);
 }
 
-// ── LOGGING INPUT HANDLERS ─────────────────────────────
+// ── EDIT HISTORICAL SESSION ────────────────────────────
+window.editSession = function(recordId) {
+  if (session) return; // block if session already active
+  const record = getAllSessions().find(s => s.id === recordId);
+  if (!record) return;
+  session = {
+    dayType: record.dayType,
+    startTime: Date.now(),
+    primaries: JSON.parse(JSON.stringify(record.primaries)),
+    ar7: JSON.parse(JSON.stringify(record.ar7)),
+    accessories: JSON.parse(JSON.stringify(record.accessories)),
+    feel: null,
+    isEditing: true,
+    editId: record.id,
+    editDate: record.date,
+  };
+  saveDraft();
+  activeDay = record.dayType;
+  document.body.classList.add('session-active');
+  document.getElementById('finishBar').style.display = 'flex';
+  startSessionClock();
+  closeHistoryPage();
+  render();
+};
+
+
 window.updatePrimarySet = function(key, idx, field, val) {
   if (!session || !session.primaries[key]) return;
   session.primaries[key].sets[idx][field] = val;
@@ -1100,7 +1134,8 @@ window.setAccessoryRpe = function(key, val) {
 
 // ── RENDER: SESSION MODE ───────────────────────────────
 function renderSessionMode(day) {
-  const banner = '<div class="session-mode-banner"><div class="sm-left"><div class="sm-pulse"></div><div><div class="sm-label">Session Active</div><div class="sm-timer" id="sessionTimerLbl">0:00 elapsed</div></div></div><button class="sm-close" onclick="discardSession()"><span class="mi mi-sm">close</span></button></div>';
+  const isEditing = session && session.isEditing;
+  const banner = '<div class="session-mode-banner"><div class="sm-left"><div class="sm-pulse"></div><div><div class="sm-label">' + (isEditing ? 'Editing Session' : 'Session Active') + '</div><div class="sm-timer" id="sessionTimerLbl">0:00 elapsed</div></div></div><button class="sm-close" onclick="discardSession()"><span class="mi mi-sm">close</span></button></div>';
 
   let bodyHtml = '';
   day.sections.forEach((sec, si) => {
@@ -1309,7 +1344,7 @@ function renderHistoryPage() {
       const d = new Date(s.date);
       const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
       const isToday = new Date().toDateString() === d.toDateString();
-      rows += '<div class="session-row"><span class="session-row-date ' + (isToday ? 'today' : '') + '">' + (isToday ? 'Today · ' : '') + dateStr + '</span><span class="session-row-score" style="' + (isWarn && i === 0 ? 'color:#ffb84d' : '') + '">' + s.score.total + '</span></div>';
+      rows += '<div class="session-row"><span class="session-row-date ' + (isToday ? 'today' : '') + '">' + (isToday ? 'Today · ' : '') + dateStr + '</span><span class="session-row-score" style="' + (isWarn && i === 0 ? 'color:#ffb84d' : '') + '">' + s.score.total + '</span><button class="session-row-edit" onclick="editSession(\'' + s.id + '\')" aria-label="Edit session"><span class="mi" style="font-size:14px">edit</span></button></div>';
     });
     html += '<div class="day-card ' + (isWarn ? 'warn' : '') + '">' +
       '<div class="day-card-header"><div class="day-card-day" style="color:' + day.accent + '">' + day.label + ' · ' + day.day + '</div>' +
